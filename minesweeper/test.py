@@ -2,6 +2,8 @@
 """
 Test cases for creating map and playing minesweeper game.
 @author:kinegratii(kinegratii@yeah.net)
+@Version:1.0.1
+Update on 2014.05.04
 """
 import unittest
 import minesweeper
@@ -48,74 +50,64 @@ class MapCreateTestCase(unittest.TestCase):
     def tearDown(self):
         pass
     
-    def test_invalid_map(self):
-        invalid_size_data = [(0, 5), (5, -1), (-3, 0), (1.5, 2), (3, 1.3)]
-        for height,width in invalid_size_data:
-            self.assertRaises(minesweeper.MapCreateError, self.create_invalid_map,height,width)
-    
-    def create_invalid_map(self, height, width):
-        return minesweeper.Map(height, width)
-    
-    def test_no_mine_info(self):
-        """Test creating map with no mine info.
-        """
-        self.assertRaises(minesweeper.MapCreateError, self.create_map)
-        
     def test_mine_valid_index(self):
         """Test creating map with valid mine index.
         """
         for data in self.valid_index_data:
-            m = minesweeper.Map(self.height, self.width, mine_index_list=data['mine_index_list'])
+            m = minesweeper.Map.create_from_mine_index_list(self.height, self.width, data['mine_index_list'])
             self.assertEqual(m.mine_number, data['mine_number'])
             
     def test_mine_invalid_index(self):
         """Test creating map with invalid mine index.
         """
         for data in self.invalid_index_data:
-            self.assertRaises(minesweeper.MapCreateError, self.create_map, mine_index_list=data)
+            self.assertRaises(minesweeper.MapCreateError,
+                              minesweeper.Map.create_from_mine_index_list,
+                              self.height,
+                              self.width,
+                              mine_index_list=data)
     
     def test_mine_valid_pos(self):
         """Test creating map with valid mine position.
         """
         for data in self.valid_pos_data:
-            m = minesweeper.Map(self.height, self.width, mine_pos_list=data['mine_pos_list'])
+            m = minesweeper.Map(self.height, self.width, data['mine_pos_list'])
             self.assertEqual(m.mine_number, data['mine_number'])
     
     def test_mine_invalid_pos(self):
         """Test creating map with invalid mine position.
         """
         for data in self.invalid_pos_data:
-            self.assertRaises(minesweeper.MapCreateError, self.create_map, mine_pos_list=data)
+            self.assertRaises(minesweeper.MapCreateError, self.create_map, data)
     
     def test_mine_valid_number(self):
         """Test creating map with valid mine number.
         """
         for data in self.valid_number_data:
-            m = minesweeper.Map(self.height, self.width, mine_number=data)
+            m = minesweeper.Map.create_from_mine_number(self.height, self.width, data)
             self.assertEqual(m.mine_number, data)
     
     def test_mine_invalid_number(self):
         """Test creating map with invalid mine number.
         """
         for data in self.invalid_number_data:
-            self.assertRaises(minesweeper.MapCreateError, self.create_map, mine_number=data)
+            self.assertRaises(minesweeper.MapCreateError,
+                              minesweeper.Map.create_from_mine_number,
+                              self.height,
+                              self.width,
+                              data)
         
     
-    def create_map(self, mine_number=None, mine_index_list=None,mine_pos_list=None):
+    def create_map(self, mine_pos_list):
         """convert constructing Map object to a callable function for self.assertRaises statement
         """
-        m = minesweeper.Map(self.height,
-                        self.width,
-                        mine_number=mine_number,
-                        mine_index_list=mine_index_list,
-                        mine_pos_list=mine_pos_list
-                        )
+        m = minesweeper.Map(self.height, self.width,mine_pos_list)
         return m
 
 class MapBaseFunctionTestCase(unittest.TestCase):
     
     def setUp(self):
-        self.mine_map = minesweeper.Map(5, 6, 6)
+        self.mine_map = minesweeper.Map.create_from_mine_number(5, 6, 6)
     
     def tearDown(self):
         self.mine_map = None
@@ -193,7 +185,7 @@ class BaseMapTestCase(unittest.TestCase):
         ##@##  01@10
         #####  01110
         """
-        self.mine_map = minesweeper.Map(5, 5, mine_pos_list=[(2, 2)])
+        self.mine_map = minesweeper.Map(5, 5, [(2, 2)])
     
     def test_one_step_success(self):
         click_list = [(0, 0), (0, 4), (4, 0), (4, 4)]

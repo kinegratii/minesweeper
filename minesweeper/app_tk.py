@@ -2,6 +2,8 @@
 """
 A GUI program for playing minesweeper written by tkinter/Tkinter,a build-in module in python.
 @author:kinegratii(kinegratii@yeah.net)
+@Version:1.0.1
+Update on 2014.05.04
 """
 import webbrowser
 import threading
@@ -19,7 +21,7 @@ class App(tk.Frame):
     
     def __init__(self):
         tk.Frame.__init__(self)
-        self.master.title('Minesweeper 1.0.0')
+        self.master.title('Minesweeper 1.0.1')
         self.master.resizable(False, False)
         self.pack(expand=tk.NO,fill=tk.BOTH)
         self.create_top_menu()
@@ -76,7 +78,7 @@ class App(tk.Frame):
         tkMessageBox.showinfo('关于','作者:kinegratii\n邮箱:kinegratii@yeah.net\n微博：http://weibo.com/kinegratii')
     
     def _version_info_handler(self):
-        tkMessageBox.showinfo('版本：V1.0.0','发布第一个版本!')
+        tkMessageBox.showinfo('版本：V1.0.1','Minesweeper-Core更新至v1.0.1!')
     
 class GameFrame(tk.Frame):
     

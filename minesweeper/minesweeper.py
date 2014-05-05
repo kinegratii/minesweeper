@@ -1,6 +1,8 @@
 #coding=utf8
 """
 @author:kinegratii(kinegratii@yeah.net)
+@Version:1.0.1
+Update on 2014.05.04
 """
 import random
 import Queue
@@ -10,7 +12,6 @@ class MapCreateError(Exception):
     """ Exception when creating map with invalid params.
     """
     INVALID_HEIGHT_OR_WIDTH = 'invalid height or width' 
-    MINE_INFO_MISSING = 'mine info missing '
     MINE_INDEX_INVALID = 'invalid mine index'
     MINE_INVALID_POS = 'invalid mine position'
     MINE_INVALID_NUMBER = 'invalid mine number'
@@ -34,12 +35,9 @@ class Map(object):
     #the mine flag in distribute map
     MINE_FLAG = -1
     
-    def __init__(self, height, width, mine_number=None, mine_index_list=None,mine_pos_list=None):
-        """Create a map with mines.You can privode mine positions in following three ways.
-        (Order by priority)
+    def __init__(self, height, width, mine_pos_list):
+        """Create a map with mine postion list.
         mine_pos_list:
-        mine_index_list:
-        mine_number:
         """
         if type(height) != type(1) or type(width) != type(1) or height <= 0 or width <= 0:
             raise MapCreateError(MapCreateError.INVALID_HEIGHT_OR_WIDTH)
@@ -47,16 +45,13 @@ class Map(object):
         self._width = width
         self._mine_number = 0
         self._mine_list = []
-        if not any([mine_number, mine_index_list,mine_pos_list]):
-            raise MapCreateError(MapCreateError.MINE_INFO_MISSING)
-        if mine_pos_list:
-            self._init_mine_list(mine_pos_list)
-        elif mine_index_list:
-            self._create_mine_list(mine_index_list)
-        else:
-            self._create_rand_mine_list(mine_number)
+        pos_set = set(mine_pos_list)
+        for pos in pos_set:
+            if not self.is_in_map(pos):
+                raise MapCreateError(MapCreateError.MINE_INVALID_POS)
+        self._mine_list = list(pos_set)
+        self._mine_number = len(pos_set)
         self._generate_distribute_map()
-        
     
     @property
     def height(self):
@@ -81,41 +76,12 @@ class Map(object):
     @property
     def distribute_map(self):
         return self._distribute_map
-            
-    def _create_mine_list(self, mine_index_list):
-        """Init mine info with a mine index list.
-        """
-        index_set = set(mine_index_list)
-        self._mine_list = []
-        for index in index_set:
-            if index in xrange(0, self.map_size):
-                self._mine_list.append((index/self._width, index%self._width))
-            else:
-                raise MapCreateError(MapCreateError.MINE_INDEX_INVALID)
-        self._mine_number = len(index_set)
-            
-    def _init_mine_list(self, mine_pos_list):
-        """Init mine info with a mine position list.
-        """
-        pos_set = set(mine_pos_list)
-        for pos in pos_set:
-            if not self.is_in_map(pos):
-                raise MapCreateError(MapCreateError.MINE_INVALID_POS)
-        self._mine_list = list(pos_set)
-        self._mine_number = len(pos_set)
-        
-    def _create_rand_mine_list(self,mine_number):
-        """Init mine info with a mine number,this will specify the mine position randomly.
-        """
-        if mine_number not in xrange(0, self.map_size + 1):
-            raise MapCreateError(MapCreateError.MINE_INVALID_NUMBER)
-        mine_index_list = random.sample(xrange(0, self.map_size), mine_number)
-        self._create_mine_list(mine_index_list)
+
         
     #Some base functions.Use self.height instead of self._height etc.
     
     def _generate_distribute_map(self):
-        """Generate the distribute map.
+        """Generate the distribute map. 
         """
         self._distribute_map = [[0 for i in xrange(0,self.width)] for i in xrange(0,self.height)]
         offset_step = [(-1,-1),(-1,0),(-1,1),(0,1),(1,1),(1,0),(1,-1),(0,-1)]
@@ -146,7 +112,32 @@ class Map(object):
         return self._distribute_map[x][y]
     
     def create_new_map(self):
-        return Map(self.height, self.width, mine_number=self.mine_number)
+        return Map.create_from_mine_number(self.height, self.width, self.mine_number)
+    
+    @staticmethod
+    def create_from_mine_number(height, width, mine_number):
+        """Create a map with mine number.
+        """
+        map_size = height * width
+        if mine_number not in xrange(0, map_size + 1):
+            raise MapCreateError(MapCreateError.MINE_INVALID_NUMBER)
+        mine_index_list = random.sample(xrange(0, map_size), mine_number)
+        return Map.create_from_mine_index_list(height, width, mine_index_list)
+    
+    @staticmethod
+    def create_from_mine_index_list(height, width, mine_index_list):
+        """Create a map with mine index list as [3, 4, 7]
+        """
+        index_set = set(mine_index_list)
+        map_size = height * width
+        mine_pos_list = []
+        for index in index_set:
+            if index in xrange(0, map_size):
+                mine_pos_list.append((index / width, index % width))
+            else:
+                raise MapCreateError(MapCreateError.MINE_INDEX_INVALID)
+        return Map(height, width, mine_pos_list)
+    
 
 class Game(object):
     """A state machine for playing minesweeper.There are some attributes and actions as usual machine.

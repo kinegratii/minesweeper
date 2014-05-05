@@ -34,4 +34,4 @@ class LevelMapConfig(object):
     @staticmethod
     def level_map(level):
         map_config = LevelMapConfig.LEVEL_MAP_DICT[level]
-        return Map(**map_config)
+        return Map.create_from_mine_number(**map_config)
