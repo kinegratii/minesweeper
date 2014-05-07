@@ -37,7 +37,9 @@ class Map(object):
     
     def __init__(self, height, width, mine_pos_list):
         """Create a map with mine postion list.
-        mine_pos_list:
+        @param height: the height of the map
+        @param width: the width of the map
+        @param mine_pos_list:the position list of mines
         """
         if type(height) != type(1) or type(width) != type(1) or height <= 0 or width <= 0:
             raise MapCreateError(MapCreateError.INVALID_HEIGHT_OR_WIDTH)
@@ -52,7 +54,7 @@ class Map(object):
         self._mine_list = list(pos_set)
         self._mine_number = len(pos_set)
         self._generate_distribute_map()
-    
+
     @property
     def height(self):
         return self._height
@@ -107,16 +109,23 @@ class Map(object):
     
     def get_near_mine_number(self, pos):
         """Return the mine number near the given position,if the position is mine return -1
+        @param pos:a tuple like (x, y) 
         """
         x, y = pos
         return self._distribute_map[x][y]
     
     def create_new_map(self):
+        """
+        @warn:the method will be deprecated in futrue version.
+        """
         return Map.create_from_mine_number(self.height, self.width, self.mine_number)
     
     @staticmethod
     def create_from_mine_number(height, width, mine_number):
         """Create a map with mine number.
+        @param height: the height of the map
+        @param width: the width of the map
+        @param mine_number: the number of all mines.
         """
         map_size = height * width
         if mine_number not in xrange(0, map_size + 1):
@@ -126,7 +135,10 @@ class Map(object):
     
     @staticmethod
     def create_from_mine_index_list(height, width, mine_index_list):
-        """Create a map with mine index list as [3, 4, 7]
+        """Create a map with mine index list
+        @param height: the height of the map
+        @param width: the width of the map
+        @param mine_index_list: the mine position index list.
         """
         index_set = set(mine_index_list)
         map_size = height * width
@@ -162,10 +174,17 @@ class Game(object):
     STATE_FAIL = 3
     
     def __init__(self, mine_map):
+        """
+        Create a new game with map.
+        @param mine_map:the map of mine
+        """
         self._mine_map = mine_map
         self._init_game()
     
     def _init_game(self):
+        """
+        set state to init.
+        """
         self._visual_state_map = [[False for i in xrange(0, self._mine_map.width)] for i in xrange(0, self._mine_map.height)]
         self._invisual_number = self._mine_map.map_size
         self._cur_step = 0
@@ -173,6 +192,9 @@ class Game(object):
         self._state = Game.STATE_PLAY
     
     def reset(self):
+        """
+        Reset the game.
+        """
         self._init_game()
 
     
@@ -212,6 +234,11 @@ class Game(object):
         return self._mine_map
     
     def move(self, click_pos):
+        """
+        reflact on user's input
+        @param click_pos:the position that user click
+        @warn:You should use play instead of this method in app.
+        """
         if self._state == Game.STATE_SUCCESS or self._state == Game.STATE_FAIL:
             # success or fail is the end state of game.
             return self._state
@@ -268,6 +295,10 @@ class Game(object):
             return self._state
     
     def play(self, click_pos):
+        """
+        Play a step
+        @param click_pos:the position that user click
+        """
         state = self.move(click_pos)
         if state == Game.STATE_SUCCESS or state == Game.STATE_FAIL:
             self._complete_game()
