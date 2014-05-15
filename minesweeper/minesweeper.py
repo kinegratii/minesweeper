@@ -46,15 +46,15 @@ class Map(object):
         self._height = height
         self._width = width
         self._mine_number = 0
-        self._mine_list = []
+        self._mine_list = ()
         pos_set = set(mine_pos_list)
         for pos in pos_set:
             if not self.is_in_map(pos):
                 raise MapCreateError(MapCreateError.MINE_INVALID_POS)
-        self._mine_list = list(pos_set)
+        self._mine_list = tuple(pos_set)
         self._mine_number = len(pos_set)
         self._generate_distribute_map()
-
+    
     @property
     def height(self):
         return self._height
@@ -115,9 +115,6 @@ class Map(object):
         return self._distribute_map[x][y]
     
     def create_new_map(self):
-        """
-        @warn:the method will be deprecated in futrue version.
-        """
         return Map.create_from_mine_number(self.height, self.width, self.mine_number)
     
     @staticmethod
@@ -135,7 +132,7 @@ class Map(object):
     
     @staticmethod
     def create_from_mine_index_list(height, width, mine_index_list):
-        """Create a map with mine index list
+        """Create a map with mine index list as [3, 4, 7]
         @param height: the height of the map
         @param width: the width of the map
         @param mine_index_list: the mine position index list.
@@ -183,7 +180,7 @@ class Game(object):
     
     def _init_game(self):
         """
-        set state to init.
+        set state to init
         """
         self._visual_state_map = [[False for i in xrange(0, self._mine_map.width)] for i in xrange(0, self._mine_map.height)]
         self._invisual_number = self._mine_map.map_size
@@ -193,7 +190,7 @@ class Game(object):
     
     def reset(self):
         """
-        Reset the game.
+        Reset the game
         """
         self._init_game()
 

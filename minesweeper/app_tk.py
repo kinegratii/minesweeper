@@ -2,9 +2,10 @@
 """
 A GUI program for playing minesweeper written by tkinter/Tkinter,a build-in module in python.
 @author:kinegratii(kinegratii@yeah.net)
-@Version:1.0.1.2
-Update on 2014.05.05
+@Version:1.0.3
+Update on 2014.05.11
 """
+import os
 import webbrowser
 import threading
 import Queue
@@ -13,17 +14,25 @@ try:
 except ImportError:
     import Tkinter as tk
 import tkMessageBox
+import textView
 from minesweeper import Map
 from minesweeper import Game
-from data import LevelMapConfig
 from widgets import CounterLabel
 from widgets import TimerLabel
+from widgets import CustomMapDialog
+from data import LevelMapConfig
+
+RESOUCE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'resource')
+
+class AppConfig(object):
+    GIT_HOMEPAGE = 'http://git.oschina.net/kinegratii/minesweeper'
+    FULL_APP_NAME = 'Minesweeper v1.0.2'
 
 class App(tk.Frame):
     
     def __init__(self):
         tk.Frame.__init__(self)
-        self.master.title('Minesweeper 1.0.1')
+        self.master.title(AppConfig.FULL_APP_NAME)
         self.master.resizable(False, False)
         self.pack(expand=tk.NO,fill=tk.BOTH)
         self.create_top_menu()
@@ -50,12 +59,13 @@ class App(tk.Frame):
                                             value=level,
                                             command=self._level_map_handler)
         self.map_menu.add_cascade(label='选择水平', menu=self.level_menu)
-        self.menu_bar.add_cascade(label='Map', menu=self.map_menu)
+        self.map_menu.add_separator()
+        self.map_menu.add_command(label='自定义地图参数', command=self._show_nap_set_dialog)
+        self.menu_bar.add_cascade(label='地图', menu=self.map_menu)
         
         self.about_menu = tk.Menu(self.menu_bar)
         self.about_menu.add_command(label='访问项目主页', command=self._project_home_handler)  
         self.about_menu.add_command(label='关于...', command=self._about_hander)
-        self.about_menu.add_command(label='版本...', command=self._version_info_handler)
         self.menu_bar.add_cascade(label='关于', menu=self.about_menu)
 
         
@@ -69,18 +79,26 @@ class App(tk.Frame):
             self.map_frame.pack_forget()
         self.map_frame = GameFrame(mine_map)
         self.map_frame.pack(side=tk.TOP)
+        
+    def _show_nap_set_dialog(self):
+        return CustomMapDialog(self, callback=App.get_map_params)
+    
+    def get_map_params(self, params_dict):
+        new_map = Map.create_from_mine_number(**params_dict)
+        self._create_map_frame(new_map)
     
     def _exit_handler(self):
         self.quit()
     
     def _project_home_handler(self):
-        webbrowser.open_new_tab('http://git.oschina.net/kinegratii/minesweeper')
+        webbrowser.open_new_tab(AppConfig.GIT_HOMEPAGE)
         
     def _about_hander(self):
-        tkMessageBox.showinfo('关于','作者:kinegratii\n邮箱:kinegratii@yeah.net\n微博：http://weibo.com/kinegratii')
-    
-    def _version_info_handler(self):
-        tkMessageBox.showinfo('版本：V1.0.1','Minesweeper-Core更新至v1.0.1!')
+        self.display_file_text('关于', 'project.txt')
+        
+    def display_file_text(self, title, filename, encoding=None):
+            fn = os.path.join(RESOUCE_DIR, filename)
+            textView.view_file(self, title, fn, encoding)        
     
 class GameFrame(tk.Frame):
     
@@ -89,7 +107,7 @@ class GameFrame(tk.Frame):
         self._create_controller_frame()
         self._create_info_frame()
         self.map_frame = tk.Frame(self)
-        self.map_frame.pack(side=tk.TOP, expand=tk.YES)
+        self.map_frame.pack(side=tk.TOP, expand=tk.YES, padx=10, pady=10)
         self.game = Game(mine_map)
         self.bt_map = []
         height, width = mine_map.height, mine_map.width
@@ -105,7 +123,7 @@ class GameFrame(tk.Frame):
     
     def _create_controller_frame(self):
         self.controller_bar = tk.Frame(self)
-        self.controller_bar.pack(side=tk.TOP, fill=tk.X, expand=tk.YES)
+        self.controller_bar.pack(side=tk.TOP, fill=tk.X, expand=tk.YES, padx=2, pady=2)
         self.start_bt = tk.Button(self.controller_bar, text='新游戏', relief=tk.GROOVE, command=self._start)
         self.start_bt.pack(side=tk.LEFT, expand=tk.NO)
         self.reset_bt = tk.Button(self.controller_bar, text='重置', relief=tk.GROOVE, command=self._reset)
@@ -214,6 +232,8 @@ class ButtonCss(object):
     @staticmethod
     def mine_clicked_css():
         return {'text':'X', 'bg':'#FF6347', 'relief':tk.RAISED,'fg':'#000000'}
+
+
 
 
 def main():

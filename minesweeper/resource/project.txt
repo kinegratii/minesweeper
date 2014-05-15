@@ -1,0 +1,24 @@
+#####################About Minesweeper#########################
+
+[summary]
+Minesweeper is a project about minesweeper game written by python.This project contains two parts:core game and tkinter GUI program. 
+
+[Minesweeper-Core]
+Version: v1.0.1
+Last update:2014-05-04
+Updates:
+** Fix a bug when click the position that near-mine-number is large than zero.
+** Add two static method of creating map using mine_index_list or mine_number in class Map.
+
+[Minesweeper-TkApp]
+Version:v1.0.2
+Last update:2014-05-14
+Updates:
+** Add a widget named textView from IDLE.
+** Add customising map by the number of mines.
+
+[Author]
+Author:kinegratii
+Email:kinegratii@yeah.net
+Homepage:http://git.oschina.net/kinegratii/minesweeper
+

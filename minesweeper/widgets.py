@@ -1,13 +1,10 @@
 #coding=utf8
-"""
-This module contains some custom widget using in tkinter app.
-@author:kinegratii(kinegratii@yeah.net)
-"""
+
 try:
     import tkinter as tk
 except ImportError:
     import Tkinter as tk
-
+    
 class CounterLabel(tk.Label):
     """A Label showing a integer.Change its value by calling functions.
     """
@@ -66,3 +63,74 @@ class TimerLabel(CounterLabel):
     @property
     def state(self):
         return self._state
+
+
+class CustomMapDialog(tk.Toplevel):
+    
+    def __init__(self, parent, modal=True, callback=None):
+        tk.Toplevel.__init__(self, parent)
+        self.create_widgets()
+        self.parent = parent
+        self.title('请输入新地图的参数')
+        
+        self.bind('<Return>',self.quit) #dismiss dialog
+        self.bind('<Escape>',self.quit) #dismiss dialog
+        self.callback = callback
+        if modal:
+            self.transient(parent)
+            self.grab_set()
+            self.wait_window()
+    
+    def create_widgets(self):
+        frame = tk.Frame(self)
+        frame.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
+        self.height = tk.IntVar(value=10)
+        self.width = tk.IntVar(value=10)
+        self.mine_number = tk.IntVar(value=10)
+        height_label = tk.Label(frame, text='地图高度')
+        height_label.grid(column=0, row=0)
+        self.height_entry = tk.Entry(frame, textvariable=self.height)
+        self.height_entry.grid(column=1, row=0)
+        width_label = tk.Label(frame, text='地图宽度')
+        width_label.grid(column=0, row=1)
+        self.width_entry = tk.Entry(frame, textvariable=self.width)
+        self.width_entry.grid(column=1, row=1) 
+        mine_num_label = tk.Label(frame, text='地雷数目')
+        mine_num_label.grid(column=0, row=2)
+        self.mine_num_entry = tk.Entry(frame, textvariable=self.mine_number)
+        self.mine_num_entry.grid(column=1, row=2)
+        self.validate_msg = tk.StringVar()
+        self.validate_entry = tk.Entry(frame, fg='#FF0000', textvariable=self.validate_msg, state=tk.DISABLED)
+        self.validate_entry.grid(column=0, row=3,columnspan=2)
+        self.ok_btn = tk.Button(frame, text='确定', command=self.ok)
+        self.ok_btn.grid(column=0, row=4)
+        self.cancel_btn = tk.Button(frame, text='取消', command=self.quit)
+        self.cancel_btn.grid(column=1, row=4)
+    
+    def quit(self):
+        self.destroy()
+    
+    def ok(self):
+        
+        if self.callback:
+            try:
+                height, width, mine_number = int(self.height.get()), int(self.width.get()), int(self.mine_number.get())
+            except ValueError:
+                self.validate_msg.set('请输入整数！')
+                return
+            if height < 3 or width < 3:
+                self.validate_msg.set('地图长度必须大于等于3！')
+                return
+            if mine_number < 0 or height * width <= mine_number:
+                self.validate_msg.set('地图数目范围不正确！')
+                return
+            self.validate_msg.set('')
+            print height, width, mine_number
+            map_params_dict = {
+                'height':height,
+                'width':width,
+                'mine_number': mine_number
+            }
+            self.destroy()
+            self.callback(self.parent, map_params_dict)
+    
