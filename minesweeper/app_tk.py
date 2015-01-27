@@ -9,10 +9,7 @@ import os
 import webbrowser
 import threading
 import Queue
-try:
-    import tkinter as tk
-except ImportError:
-    import Tkinter as tk
+import Tkinter as tk
 import tkMessageBox
 import textView
 from minesweeper import Map

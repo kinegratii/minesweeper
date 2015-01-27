@@ -1,10 +1,8 @@
 """Simple text browser for IDLE
 
 """
-try:
-    from Tkinter import *
-except ImportError:
-    from tkinter import *
+
+from Tkinter import *
 import tkMessageBox
 
 class TextViewer(Toplevel):
