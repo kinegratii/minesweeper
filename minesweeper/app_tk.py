@@ -1,6 +1,6 @@
 #coding=utf8
 """
-A GUI program for playing minesweeper written by tkinter/Tkinter,a build-in module in python.
+A GUI program for playing minesweeper written by Tkinter,a build-in module in python.
 @author:kinegratii(kinegratii@yeah.net)
 @Version:1.0.3
 Update on 2014.05.11
@@ -11,25 +11,26 @@ import threading
 import Queue
 import Tkinter as tk
 import tkMessageBox
-import textView
-from minesweeper import Map
-from minesweeper import Game
-from widgets import CounterLabel
-from widgets import TimerLabel
-from widgets import CustomMapDialog
-from data import LevelMapConfig
 
-RESOUCE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'resource')
 
-class AppConfig(object):
-    GIT_HOMEPAGE = 'http://git.oschina.net/kinegratii/minesweeper'
-    FULL_APP_NAME = 'Minesweeper v1.0.2'
+
+import settings
+from style import ButtonStyle
+from core.minesweeper import Map
+from core.minesweeper import Game
+from core.helpers import LevelMapConfig
+
+from widgets import textView
+from widgets.widgets import CounterLabel
+from widgets.widgets import TimerLabel
+from widgets.widgets import CustomMapDialog
+
 
 class App(tk.Frame):
     
     def __init__(self):
         tk.Frame.__init__(self)
-        self.master.title(AppConfig.FULL_APP_NAME)
+        self.master.title(settings.APP_NAME)
         self.master.resizable(False, False)
         self.pack(expand=tk.NO,fill=tk.BOTH)
         self.create_top_menu()
@@ -88,13 +89,13 @@ class App(tk.Frame):
         self.quit()
     
     def _project_home_handler(self):
-        webbrowser.open_new_tab(AppConfig.GIT_HOMEPAGE)
+        webbrowser.open_new_tab(settings.OSC_URL)
         
     def _about_hander(self):
         self.display_file_text('关于', 'project.txt')
         
     def display_file_text(self, title, filename, encoding=None):
-            fn = os.path.join(RESOUCE_DIR, filename)
+            fn = os.path.join(settings.STATIC_DIR, filename)
             textView.view_file(self, title, fn, encoding)        
     
 class GameFrame(tk.Frame):
@@ -106,13 +107,13 @@ class GameFrame(tk.Frame):
         self.map_frame = tk.Frame(self)
         self.map_frame.pack(side=tk.TOP, expand=tk.YES, padx=10, pady=10)
         self.game = Game(mine_map)
-        self.bt_map = []
+        #self.bt_map = []
         height, width = mine_map.height, mine_map.width
         self.bt_map = [[None for i in xrange(0, width)] for i in xrange(0, height)]
         for x in xrange(0, height):
             for y in xrange(0, width):
                 self.bt_map[x][y] = tk.Button(self.map_frame,text='', width=3,height=1, command = lambda x=x,y=y:self._on_click(x,y))
-                self.bt_map[x][y].config(ButtonCss.invisual_btn_css())
+                self.bt_map[x][y].config(ButtonStyle.invisual_btn_css())
                 def right_click_handler(event, self=self, x=x, y=y):
                     return self._on_right_click(event, x, y)
                 self.bt_map[x][y].bind('<Button-3>', right_click_handler)
@@ -177,7 +178,7 @@ class GameFrame(tk.Frame):
             tkMessageBox.showinfo('提示','恭喜你通关了！', parent=self)
         elif state == Game.STATE_FAIL:
             self.timer_count_label.stop_timer()
-            tkMessageBox.showinfo('提示','很遗憾，游戏失败！', parent=self)
+            tkMessageBox.showerror('提示','很遗憾，游戏失败！', parent=self)
     
     def _on_right_click(self, event, x, y):
         if self.game.state == Game.STATE_PLAY and not self.game.visual_state_map[x][y]:
@@ -198,39 +199,15 @@ class GameFrame(tk.Frame):
             for j in xrange(0,self.game.width):
                 if self.game.visual_state_map[i][j]:
                     if self.game.mine_map.is_mine((i,j)):
-                        self.bt_map[i][j].config(ButtonCss.mine_clicked_css())
+                        self.bt_map[i][j].config(ButtonStyle.mine_clicked_css())
                     else:
                         tmp = self.game.mine_map.distribute_map[i][j]
-                        self.bt_map[i][j].config(ButtonCss.tip_btn_css(tmp))
+                        self.bt_map[i][j].config(ButtonStyle.tip_btn_css(tmp))
                 else:
                     if self.bt_map[i][j]['text'] == '?':
-                        self.bt_map[i][j].config(ButtonCss.invisual_btn_css('?'))
+                        self.bt_map[i][j].config(ButtonStyle.invisual_btn_css('?'))
                     else:
-                        self.bt_map[i][j].config(ButtonCss.invisual_btn_css())
-    
-
-class ButtonCss(object):
-    """ the style for buttons on condition.
-    """
-    @staticmethod
-    def invisual_btn_css(text=None):
-        text = text or ''
-        return {'relief':tk.RAISED, 'text':text,'bg':'#DDDDDD','fg':'#000000'}
-    
-    @staticmethod
-    def tip_btn_css(number):
-        if number == 0:
-            text = ''
-        else:
-            text = str(number)
-        colors = ['#BBBBBB','#0000FF','#191970','#CC0000','#FF00FF','#B22222','#FFFF00','#FFBBCC','#DDCC00']
-        return {'text':text, 'fg':colors[number], 'relief':tk.SUNKEN, 'bg':'#DDDDDD'}
-    
-    @staticmethod
-    def mine_clicked_css():
-        return {'text':'X', 'bg':'#FF6347', 'relief':tk.RAISED,'fg':'#000000'}
-
-
+                        self.bt_map[i][j].config(ButtonStyle.invisual_btn_css())
 
 
 def main():
