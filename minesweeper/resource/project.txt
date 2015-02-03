@@ -1,24 +1,18 @@
-#####################About Minesweeper#########################
+[概述]
+Minesweeper是一个基于Tkinter的扫雷游戏开源项目。软件主要分为两个部分：
+* minesweeper.core包：扫雷游戏核心数据结果和算法
+* minesweeper.widgets包：基于Tkinter的GUI控件
 
-[summary]
-Minesweeper is a project about minesweeper game written by python.This project contains two parts:core game and tkinter GUI program. 
+[版本]
 
-[Minesweeper-Core]
-Version: v1.0.1
-Last update:2014-05-04
-Updates:
-** Fix a bug when click the position that near-mine-number is large than zero.
-** Add two static method of creating map using mine_index_list or mine_number in class Map.
+v1.1.0
+更新于2015-02-02
 
-[Minesweeper-TkApp]
-Version:v1.0.2
-Last update:2014-05-14
-Updates:
-** Add a widget named textView from IDLE.
-** Add customising map by the number of mines.
+[协议]
+本项目使用GPLv2开源协议。
 
-[Author]
-Author:kinegratii
-Email:kinegratii@yeah.net
-Homepage:http://git.oschina.net/kinegratii/minesweeper
+[作者]
+* 作者:kinegratii
+* 邮箱:kinegratii@yeah.net
+* 主页:http://git.oschina.net/kinegratii/minesweeper
 

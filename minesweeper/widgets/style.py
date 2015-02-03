@@ -2,6 +2,7 @@
 
 import Tkinter as tk
 
+
 class ButtonStyle(object):
     """ the style for buttons on condition.
     """

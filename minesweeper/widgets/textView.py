@@ -1,3 +1,4 @@
+# coding=utf8
 """Simple text browser for IDLE
 
 """
@@ -5,10 +6,12 @@
 from Tkinter import *
 import tkMessageBox
 
+
 class TextViewer(Toplevel):
     """A simple text viewer dialog for IDLE
 
     """
+
     def __init__(self, parent, title, text, modal=True):
         """Show the given text in a scrollable window with a 'close' button
 
@@ -18,7 +21,7 @@ class TextViewer(Toplevel):
         self.geometry("=%dx%d+%d+%d" % (625, 500,
                                         parent.winfo_rootx() + 10,
                                         parent.winfo_rooty() + 10))
-        #elguavas - config placeholders til config stuff completed
+        # elguavas - config placeholders til config stuff completed
         self.bg = '#ffffff'
         self.fg = '#000000'
 
@@ -28,8 +31,8 @@ class TextViewer(Toplevel):
         self.parent = parent
         self.textView.focus_set()
         #key bindings for this dialog
-        self.bind('<Return>',self.Ok) #dismiss dialog
-        self.bind('<Escape>',self.Ok) #dismiss dialog
+        self.bind('<Return>', self.Ok)  #dismiss dialog
+        self.bind('<Escape>', self.Ok)  #dismiss dialog
         self.textView.insert(0.0, text)
         self.textView.config(state=DISABLED)
 
@@ -50,10 +53,10 @@ class TextViewer(Toplevel):
         self.scrollbarView.config(command=self.textView.yview)
         self.textView.config(yscrollcommand=self.scrollbarView.set)
         self.buttonOk.pack()
-        self.scrollbarView.pack(side=RIGHT,fill=Y)
-        self.textView.pack(side=LEFT,expand=TRUE,fill=BOTH)
-        frameButtons.pack(side=BOTTOM,fill=X)
-        frameText.pack(side=TOP,expand=TRUE,fill=BOTH)
+        self.scrollbarView.pack(side=RIGHT, fill=Y)
+        self.textView.pack(side=LEFT, expand=TRUE, fill=BOTH)
+        frameButtons.pack(side=BOTTOM, fill=X)
+        frameText.pack(side=TOP, expand=TRUE, fill=BOTH)
 
     def Ok(self, event=None):
         self.destroy()
@@ -62,15 +65,18 @@ class TextViewer(Toplevel):
 def view_text(parent, title, text, modal=True):
     return TextViewer(parent, title, text, modal)
 
+
 def view_file(parent, title, filename, encoding=None, modal=True):
     try:
         if encoding:
             import codecs
+
             textFile = codecs.open(filename, 'r')
         else:
             textFile = open(filename, 'r')
     except IOError:
         import tkMessageBox
+
         tkMessageBox.showerror(title='File Load Error',
                                message='Unable to load file %r .' % filename,
                                parent=parent)
@@ -79,20 +85,20 @@ def view_file(parent, title, filename, encoding=None, modal=True):
 
 
 if __name__ == '__main__':
-    #test the dialog
-    root=Tk()
+    # test the dialog
+    root = Tk()
     root.title('textView test')
     filename = './textView.py'
     text = file(filename, 'r').read()
     btn1 = Button(root, text='view_text',
-                  command=lambda:view_text(root, 'view_text', text))
+                  command=lambda: view_text(root, 'view_text', text))
     btn1.pack(side=LEFT)
     btn2 = Button(root, text='view_file',
-                  command=lambda:view_file(root, 'view_file', filename))
+                  command=lambda: view_file(root, 'view_file', filename))
     btn2.pack(side=LEFT)
     btn3 = Button(root, text='nonmodal view_text',
-                  command=lambda:view_text(root, 'nonmodal view_text', text,
-                                           modal=False))
+                  command=lambda: view_text(root, 'nonmodal view_text', text,
+                                            modal=False))
     btn3.pack(side=LEFT)
     close = Button(root, text='Close', command=root.destroy)
     close.pack(side=RIGHT)
