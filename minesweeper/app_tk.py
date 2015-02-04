@@ -15,7 +15,7 @@ from widgets.style import ButtonStyle
 from widgets import textView
 from widgets.widgets import CounterLabel
 from widgets.widgets import TimerLabel
-from widgets.widgets import CustomMapDialog
+from widgets.widgets import MapParamsInputDialog
 
 
 class App(tk.Frame):
@@ -34,29 +34,28 @@ class App(tk.Frame):
         self.menu_bar = tk.Menu(top)
         top['menu'] = self.menu_bar
 
-        self.game_menu = tk.Menu(self.menu_bar)
-        self.game_menu.add_command(label='退出', command=self._exit_handler)
-        self.menu_bar.add_cascade(label='游戏', menu=self.game_menu)
+        game_menu = tk.Menu(self.menu_bar)
+        game_menu.add_command(label='退出', command=self._exit_handler)
+        self.menu_bar.add_cascade(label='游戏', menu=game_menu)
 
-        self.map_menu = tk.Menu(self.menu_bar)
-        self.level_menu = tk.Menu(self.map_menu)
+        map_menu = tk.Menu(self.menu_bar)
+        level_menu = tk.Menu(map_menu)
         self.level = tk.IntVar()
         self.level.set(LevelMapConfig.LEVEL_BEGINNER)
         for level, label in LevelMapConfig.CHOICES:
-            self.level_menu.add_radiobutton(label=label,
-                                            variable=self.level,
-                                            value=level,
-                                            command=self._level_map_handler)
-        self.map_menu.add_cascade(label='选择水平', menu=self.level_menu)
-        self.map_menu.add_separator()
-        self.map_menu.add_command(label='自定义地图参数', command=self._show_nap_set_dialog)
-        self.menu_bar.add_cascade(label='地图', menu=self.map_menu)
+            level_menu.add_radiobutton(label=label,
+                                       variable=self.level,
+                                       value=level,
+                                       command=self._level_map_handler)
+        map_menu.add_cascade(label='选择水平', menu=level_menu)
+        map_menu.add_separator()
+        map_menu.add_command(label='自定义地图参数', command=self._show_nap_set_dialog)
+        self.menu_bar.add_cascade(label='地图', menu=map_menu)
 
-        self.about_menu = tk.Menu(self.menu_bar)
-        self.about_menu.add_command(label='访问项目主页', command=self._redirect_project_homepage)
-        self.about_menu.add_command(label='关于...', command=self._show_about_info)
-        self.menu_bar.add_cascade(label='关于', menu=self.about_menu)
-
+        about_menu = tk.Menu(self.menu_bar)
+        about_menu.add_command(label='访问项目主页', command=self._redirect_project_homepage)
+        about_menu.add_command(label='关于...', command=self._show_about_info)
+        self.menu_bar.add_cascade(label='关于', menu=about_menu)
 
     def _level_map_handler(self):
         level = self.level.get()
@@ -70,7 +69,7 @@ class App(tk.Frame):
         self.map_frame.pack(side=tk.TOP)
 
     def _show_nap_set_dialog(self):
-        return CustomMapDialog(self, callback=App.get_map_params)
+        return MapParamsInputDialog(self, callback=App.get_map_params)
 
     def get_map_params(self, params_dict):
         new_map = Map.create_from_mine_number(**params_dict)
@@ -103,13 +102,13 @@ class GameFrame(tk.Frame):
         for x in xrange(0, height):
             for y in xrange(0, width):
                 self.bt_map[x][y] = tk.Button(self.map_frame, text='', width=3, height=1,
-                                              command=lambda x=x, y=y: self._on_click(x, y))
-                self.bt_map[x][y].config(ButtonStyle.invisual_btn_css())
+                                              command=lambda x=x, y=y: self._sweep_mine(x, y))
+                self.bt_map[x][y].config(ButtonStyle.grid_unknown_style)
 
-                def right_click_handler(event, self=self, x=x, y=y):
-                    return self._on_right_click(event, x, y)
+                def _mark_mine(event, self=self, x=x, y=y):
+                    return self.mark_grid_as_mine(event, x, y)
 
-                self.bt_map[x][y].bind('<Button-3>', right_click_handler)
+                self.bt_map[x][y].bind('<Button-3>', _mark_mine)
                 self.bt_map[x][y].grid(row=x, column=y)
 
     def _create_controller_frame(self):
@@ -142,7 +141,6 @@ class GameFrame(tk.Frame):
         self.timer_count_label = TimerLabel(self.info_frame)
         self.timer_count_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
 
-
     def _start(self):
         mine_map = self.game.mine_map.create_new_map()
         self.game = Game(mine_map)
@@ -158,8 +156,8 @@ class GameFrame(tk.Frame):
         self.flag_count_label.set_counter_value()
         self.timer_count_label.reset()
 
-    def _on_click(self, x, y):
-        if self.game.visual_state_map[x][y]:
+    def _sweep_mine(self, x, y):
+        if self.game.swept_state_map[x][y]:
             return
         if not self.timer_count_label.state:
             self.timer_count_label.start_timer()
@@ -173,8 +171,8 @@ class GameFrame(tk.Frame):
             self.timer_count_label.stop_timer()
             tkMessageBox.showerror('提示', '很遗憾，游戏失败！', parent=self)
 
-    def _on_right_click(self, event, x, y):
-        if self.game.state == Game.STATE_PLAY and not self.game.visual_state_map[x][y]:
+    def mark_grid_as_mine(self, event, x, y):
+        if self.game.state == Game.STATE_PLAY and not self.game.swept_state_map[x][y]:
             cur_text = self.bt_map[x][y]['text']
             if cur_text == '?':
                 cur_text = ''
@@ -186,21 +184,20 @@ class GameFrame(tk.Frame):
 
 
     def draw_map(self):
-        #重画地图
+        # 重画地图
         for i in xrange(0, self.game.height):
-            s = ''
             for j in xrange(0, self.game.width):
-                if self.game.visual_state_map[i][j]:
+                if self.game.swept_state_map[i][j]:
                     if self.game.mine_map.is_mine((i, j)):
-                        self.bt_map[i][j].config(ButtonStyle.mine_clicked_css())
+                        self.bt_map[i][j].config(ButtonStyle.grid_mine_style)
                     else:
                         tmp = self.game.mine_map.distribute_map[i][j]
-                        self.bt_map[i][j].config(ButtonStyle.tip_btn_css(tmp))
+                        self.bt_map[i][j].config(ButtonStyle.grid_tip_style(tmp))
                 else:
                     if self.bt_map[i][j]['text'] == '?':
-                        self.bt_map[i][j].config(ButtonStyle.invisual_btn_css('?'))
+                        self.bt_map[i][j].config(ButtonStyle.grid_marked_style)
                     else:
-                        self.bt_map[i][j].config(ButtonStyle.invisual_btn_css())
+                        self.bt_map[i][j].config(ButtonStyle.grid_unknown_style)
 
 
 def main():
