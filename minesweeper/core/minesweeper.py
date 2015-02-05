@@ -4,20 +4,7 @@
 @Version:1.0.1
 Update on 2014.05.04
 """
-import random
 import Queue
-
-
-class MapCreateError(Exception):
-    """ 创建过程中出现的异常.
-    """
-    INVALID_HEIGHT_OR_WIDTH = 'invalid height or width'
-    MINE_INDEX_INVALID = 'invalid mine index'
-    MINE_INVALID_POS = 'invalid mine position'
-    MINE_INVALID_NUMBER = 'invalid mine number'
-
-    def __init__(self, message):
-        super(MapCreateError, self).__init__(message)
 
 
 class Map(object):
@@ -37,18 +24,12 @@ class Map(object):
         """根据地图大小和地雷的位置创建地图
         @param height: 高度
         @param width: 宽度
-        @param mine_pos_list:地雷位置
+        @param mine_pos_list:地雷位置列表
         """
         self._height = height
         self._width = width
         self._mine_number = 0
-        self._mine_list = ()
-        pos_set = set(mine_pos_list)
-        for pos in pos_set:
-            if not self.is_in_map(pos):
-                raise MapCreateError(MapCreateError.MINE_INVALID_POS)
-        self._mine_list = tuple(pos_set)
-        self._mine_number = len(pos_set)
+        self._mine_list = list(set(mine_pos_list))
         self._generate_distribute_map()
 
     @property
@@ -79,7 +60,7 @@ class Map(object):
     def mine_number(self):
         """地雷个数
         """
-        return self._mine_number
+        return len(self._mine_list)
 
     @property
     def distribute_map(self):
@@ -123,41 +104,6 @@ class Map(object):
         """
         x, y = pos
         return self._distribute_map[x][y]
-
-    def create_new_map(self):
-        return Map.create_from_mine_number(self.height, self.width, self.mine_number)
-
-    @staticmethod
-    def create_from_mine_number(height, width, mine_number):
-        """Create a map with mine number.
-        @param height: the height of the map
-        @param width: the width of the map
-        @param mine_number: the number of all mines.
-        """
-        # TODO 移到Game类
-        map_size = height * width
-        if mine_number not in xrange(0, map_size + 1):
-            raise MapCreateError(MapCreateError.MINE_INVALID_NUMBER)
-        mine_index_list = random.sample(xrange(0, map_size), mine_number)
-        return Map.create_from_mine_index_list(height, width, mine_index_list)
-
-    @staticmethod
-    def create_from_mine_index_list(height, width, mine_index_list):
-        """Create a map with mine index list as [3, 4, 7]
-        @param height: the height of the map
-        @param width: the width of the map
-        @param mine_index_list: the mine position index list.
-        """
-        # TODO 移动到Game类
-        index_set = set(mine_index_list)
-        map_size = height * width
-        mine_pos_list = []
-        for index in index_set:
-            if index in xrange(0, map_size):
-                mine_pos_list.append((index / width, index % width))
-            else:
-                raise MapCreateError(MapCreateError.MINE_INDEX_INVALID)
-        return Map(height, width, mine_pos_list)
 
 
 class Game(object):

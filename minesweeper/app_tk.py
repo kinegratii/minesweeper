@@ -8,9 +8,9 @@ import Tkinter as tk
 import tkMessageBox
 
 import settings
-from core.minesweeper import Map
 from core.minesweeper import Game
 from core.helpers import LevelMapConfig
+from core.helpers import create_from_mine_number
 from widgets.style import ButtonStyle
 from widgets import textView
 from widgets.widgets import CounterLabel
@@ -72,7 +72,7 @@ class App(tk.Frame):
         return MapParamsInputDialog(self, callback=App.get_map_params)
 
     def get_map_params(self, params_dict):
-        new_map = Map.create_from_mine_number(**params_dict)
+        new_map = create_from_mine_number(**params_dict)
         self._create_map_frame(new_map)
 
     def _exit_handler(self):
@@ -142,7 +142,7 @@ class GameFrame(tk.Frame):
         self.timer_count_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
 
     def _start(self):
-        mine_map = self.game.mine_map.create_new_map()
+        mine_map = create_from_mine_number(self.game.height, self.game.width, self.game.mine_number)
         self.game = Game(mine_map)
         self.draw_map()
         self.step_count_label.set_counter_value()

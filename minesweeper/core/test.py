@@ -7,6 +7,8 @@ Update on 2014.05.04
 """
 import unittest
 import minesweeper
+from helpers import create_from_mine_number
+from helpers import create_from_mine_index_list
 
 
 class MapCreateTestCase(unittest.TestCase):
@@ -23,12 +25,6 @@ class MapCreateTestCase(unittest.TestCase):
                 'mine_number': 5
             }
         )
-        self.invalid_index_data = (
-            [-1, 5, 6, 41],
-            [-9, 6, 8],
-            [30, ],
-            [2.3, 5]
-        )
         self.valid_pos_data = (
             {
                 'mine_pos_list': [(0, 0), (3, 4), (2, 2)],
@@ -39,14 +35,7 @@ class MapCreateTestCase(unittest.TestCase):
                 'mine_number': 4
             }
         )
-        self.invalid_pos_data = (
-            [(0, 0), (0, -1), (4, 7)],
-            [(5, 4), (3, 4)],
-            [(5, 6), (0, 1), (2, 2)],
-            [(0, 0), (3, 1.6), (4, 5)]
-        )
         self.valid_number_data = [4, 10]
-        self.invalid_number_data = [-1, 31]
 
     def tearDown(self):
         pass
@@ -55,18 +44,8 @@ class MapCreateTestCase(unittest.TestCase):
         """Test creating map with valid mine index.
         """
         for data in self.valid_index_data:
-            m = minesweeper.Map.create_from_mine_index_list(self.height, self.width, data['mine_index_list'])
+            m = create_from_mine_index_list(self.height, self.width, data['mine_index_list'])
             self.assertEqual(m.mine_number, data['mine_number'])
-
-    def test_mine_invalid_index(self):
-        """Test creating map with invalid mine index.
-        """
-        for data in self.invalid_index_data:
-            self.assertRaises(minesweeper.MapCreateError,
-                              minesweeper.Map.create_from_mine_index_list,
-                              self.height,
-                              self.width,
-                              mine_index_list=data)
 
     def test_mine_valid_pos(self):
         """Test creating map with valid mine position.
@@ -75,28 +54,12 @@ class MapCreateTestCase(unittest.TestCase):
             m = minesweeper.Map(self.height, self.width, data['mine_pos_list'])
             self.assertEqual(m.mine_number, data['mine_number'])
 
-    def test_mine_invalid_pos(self):
-        """Test creating map with invalid mine position.
-        """
-        for data in self.invalid_pos_data:
-            self.assertRaises(minesweeper.MapCreateError, self.create_map, data)
-
     def test_mine_valid_number(self):
         """Test creating map with valid mine number.
         """
         for data in self.valid_number_data:
-            m = minesweeper.Map.create_from_mine_number(self.height, self.width, data)
+            m = create_from_mine_number(self.height, self.width, data)
             self.assertEqual(m.mine_number, data)
-
-    def test_mine_invalid_number(self):
-        """Test creating map with invalid mine number.
-        """
-        for data in self.invalid_number_data:
-            self.assertRaises(minesweeper.MapCreateError,
-                              minesweeper.Map.create_from_mine_number,
-                              self.height,
-                              self.width,
-                              data)
 
 
     def create_map(self, mine_pos_list):
@@ -108,7 +71,7 @@ class MapCreateTestCase(unittest.TestCase):
 
 class MapBaseFunctionTestCase(unittest.TestCase):
     def setUp(self):
-        self.mine_map = minesweeper.Map.create_from_mine_number(5, 6, 6)
+        self.mine_map = create_from_mine_number(5, 6, 6)
 
     def tearDown(self):
         self.mine_map = None

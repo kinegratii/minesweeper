@@ -2,7 +2,24 @@
 """
 This module contains some hard-coding data for level map.
 """
+
+import random
+
 from minesweeper import Map
+
+
+def create_from_mine_index_list(height, width, mine_index_list):
+    """根据地雷序号创建地图
+    """
+    return Map(height, width, ((index / width, index % width) for index in mine_index_list))
+
+
+def create_from_mine_number(height, width, mine_number):
+    """创建随机地图
+    """
+    map_size = height * width
+    mine_index_list = random.sample(xrange(0, map_size), mine_number)
+    return create_from_mine_index_list(height, width, mine_index_list)
 
 
 class LevelMapConfig(object):
@@ -33,4 +50,4 @@ class LevelMapConfig(object):
     @staticmethod
     def level_map(level):
         map_config = LevelMapConfig.LEVEL_MAP_DICT[level]
-        return Map.create_from_mine_number(**map_config)
+        return create_from_mine_number(**map_config)
