@@ -2,8 +2,8 @@ from distutils.core import setup
 
 setup(
     name='minesweeper',
-    version='1.1.0',
-    packages=['minesweeper', 'minesweeper.core', 'minesweeper.widgets', 'minesweeper.utils'],
+    version='1.1.1',
+    packages=['minesweeper', 'minesweeper.core', 'minesweeper.widgets'],
     url='http://github.com/kinegratii/minesweeper',
     license='GPLv2',
     author='kinegratii',

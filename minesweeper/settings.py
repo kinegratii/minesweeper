@@ -4,7 +4,7 @@ import os
 
 DEBUG = True
 
-APP_NAME = 'Minesweeper v1.1.0'
+APP_NAME = 'Minesweeper v1.1.1'
 
 BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 
