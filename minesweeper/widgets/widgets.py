@@ -126,4 +126,12 @@ class MapParamsInputDialog(tk.Toplevel):
             }
             self.destroy()
             self.callback(self.parent, map_params_dict)
-    
+
+
+class MessageLabel(tk.Label):
+    def splash(self, text):
+        self.config({'text': text})
+        self.after(700, self._clear)
+
+    def _clear(self):
+        self.config({'text': ''})
