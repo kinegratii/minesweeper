@@ -27,7 +27,7 @@ class LevelMapConfig(object):
     LEVEL_PLAYER = 4
     LEVEL_EXPERT = 9
 
-    CHOICES = ((LEVEL_BEGINNER, '新手'), (LEVEL_PLAYER, '老手'), (LEVEL_EXPERT, '专家'))
+    CHOICES = ((LEVEL_BEGINNER, '新手（10X10-10）'), (LEVEL_PLAYER, '老手（20X30-100）'), (LEVEL_EXPERT, '专家（25X40-200）'))
 
     LEVEL_MAP_DICT = {
         LEVEL_BEGINNER: {

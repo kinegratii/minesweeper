@@ -6,11 +6,7 @@ class ButtonStyle(object):
     """
 
     @staticmethod
-    def grid_tip_style(number):
-        if number == 0:
-            text = ''
-        else:
-            text = str(number)
+    def grid_swept_style(number):
         colors = ['#BBBBBB',
                   '#0000FF',
                   '#00FF00',
@@ -21,7 +17,7 @@ class ButtonStyle(object):
                   '#FFBBCC',
                   '#DDCC00'
         ]
-        return {'relief': 'sunken', 'text': text, 'bg': '#DDDDDD', 'fg': colors[number]}
+        return {'relief': 'sunken', 'text': number or ' ', 'bg': '#DDDDDD', 'fg': colors[number]}
 
     grid_unknown_style = {'relief': 'raised', 'text': '', 'bg': '#DDDDDD', 'fg': '#000000'}
 

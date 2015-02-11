@@ -65,8 +65,14 @@ class TimerLabel(CounterLabel):
 
 
 class MapParamsInputDialog(tk.Toplevel):
-    def __init__(self, parent, modal=True, callback=None):
+    def __init__(self, parent, modal=True, callback=None, initial=None):
         tk.Toplevel.__init__(self, parent)
+        initial = initial or {'width':10,'height':10,'mine_number':10}
+        self.height = tk.IntVar(value=initial['height'])
+        self.width = tk.IntVar(value=initial['width'])
+        self.mine_number = tk.IntVar(value=initial['mine_number'])
+        self.validate_msg = tk.StringVar()
+        
         self.create_widgets()
         self.parent = parent
         self.title('请输入新地图的参数')
@@ -74,7 +80,11 @@ class MapParamsInputDialog(tk.Toplevel):
         self.bind('<Return>', self.bind_quit)  # dismiss dialog
         self.bind('<Escape>', self.bind_quit)  # dismiss dialog
         self.callback = callback
+
         if modal:
+            self.geometry("=%dx%d+%d+%d" % (200, 130,
+                                    parent.winfo_rootx() + 10,
+                                    parent.winfo_rooty() + 10))
             self.transient(parent)
             self.grab_set()
             self.wait_window()
@@ -82,11 +92,6 @@ class MapParamsInputDialog(tk.Toplevel):
     def create_widgets(self):
         frame = tk.Frame(self)
         frame.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
-        self.height = tk.IntVar(value=10)
-        self.width = tk.IntVar(value=10)
-        self.mine_number = tk.IntVar(value=10)
-        self.validate_msg = tk.StringVar()
-
         tk.Label(frame, text='地图高度').grid(column=0, row=0)
         tk.Entry(frame, textvariable=self.height).grid(column=1, row=0)
         tk.Label(frame, text='地图宽度').grid(column=0, row=1)
@@ -95,8 +100,8 @@ class MapParamsInputDialog(tk.Toplevel):
         tk.Entry(frame, textvariable=self.mine_number).grid(column=1, row=2)
         tk.Entry(frame, fg='#FF0000', textvariable=self.validate_msg, state=tk.DISABLED).grid(column=0, row=3,
                                                                                               columnspan=2)
-        tk.Button(frame, text='确定', command=self.ok).grid(column=0, row=4)
-        tk.Button(frame, text='取消', command=self.quit).grid(column=1, row=4)
+        tk.Button(frame, text='确定', command=self.ok).grid(column=0, row=4,ipadx=10)
+        tk.Button(frame, text='取消', command=self.quit).grid(column=1, row=4,ipadx=10)
 
     def quit(self):
         self.destroy()

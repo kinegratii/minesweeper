@@ -74,7 +74,12 @@ class App(tk.Frame):
         self.map_frame.pack(side=tk.TOP)
 
     def create_custom_map(self):
-        return MapParamsInputDialog(self, callback=App.get_map_params)
+        params = {
+            'width':self.map_frame.game.width,
+            'height':self.map_frame.game.height,
+            'mine_number':self.map_frame.game.mine_number
+        }
+        return MapParamsInputDialog(self, callback=App.get_map_params,initial=params)
 
     def get_map_params(self, params_dict):
         new_map = create_from_mine_number(**params_dict)
@@ -203,7 +208,7 @@ class GameFrame(tk.Frame):
                         self.bt_map[i][j].config(ButtonStyle.grid_mine_style)
                     else:
                         tmp = self.game.mine_map.distribute_map[i][j]
-                        self.bt_map[i][j].config(ButtonStyle.grid_tip_style(tmp))
+                        self.bt_map[i][j].config(ButtonStyle.grid_swept_style(tmp))
                 else:
                     if self.bt_map[i][j]['text'] == '?':
                         self.bt_map[i][j].config(ButtonStyle.grid_marked_style)
