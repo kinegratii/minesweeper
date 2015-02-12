@@ -228,7 +228,7 @@ class Game(object):
                 self._state = Game.STATE_SUCCESS
             else:
                 self._state = Game.STATE_PLAY
-            return Game.STATE_PLAY
+            return self._state
         else:
             scan_step = [(-1, 0), (0, 1), (1, 0), (0, -1)]
             assert near_mine_number == 0
