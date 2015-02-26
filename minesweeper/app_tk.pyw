@@ -207,7 +207,7 @@ class GameFrame(tk.Frame):
                     if self.game.mine_map.is_mine((i, j)):
                         self.bt_map[i][j].config(ButtonStyle.grid_mine_style)
                     else:
-                        tmp = self.game.mine_map.distribute_map[i][j]
+                        tmp = self.game.mine_map.near_mine_map[i][j]
                         self.bt_map[i][j].config(ButtonStyle.grid_swept_style(tmp))
                 else:
                     if self.bt_map[i][j]['text'] == '?':

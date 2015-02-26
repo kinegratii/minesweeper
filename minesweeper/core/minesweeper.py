@@ -15,7 +15,7 @@ class Map(object):
         map_size:整数，地图大小。
         mine_list:列表，地雷位置列表每个元素都是(x,y)的元组，表示该位置是地雷
         mine_number:：整数，地雷总数
-        distribute_map:二维数组，附近地雷分布图，（x,y）的值表示该位置附近8个单元格中的地雷个数，如果本上
+        near_mine_map:二维数组，附近地雷分布图，（x,y）的值表示该位置附近8个单元格中的地雷个数，如果本上
     """
     # the mine flag in distribute map
     MINE_FLAG = -1
@@ -63,10 +63,10 @@ class Map(object):
         return len(self._mine_list)
 
     @property
-    def distribute_map(self):
+    def near_mine_map(self):
         """地雷分布图
         """
-        return self._distribute_map
+        return self._near_mine_map
 
 
     # Some base functions.Use self.height instead of self._height etc.
@@ -74,24 +74,19 @@ class Map(object):
     def _generate_distribute_map(self):
         """生成地雷分布图
         """
-        self._distribute_map = [[0 for i in xrange(0, self.width)] for i in xrange(0, self.height)]
+        self._near_mine_map = [[0 for i in xrange(0, self.width)] for i in xrange(0, self.height)]
         offset_step = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1)]
         for t_x, t_y in self.mine_list:
-            self._distribute_map[t_x][t_y] = Map.MINE_FLAG
+            self._near_mine_map[t_x][t_y] = Map.MINE_FLAG
             for o_x, o_y in offset_step:
                 d_x, d_y = t_x + o_x, t_y + o_y
-                if self.is_in_map((d_x, d_y)):
-                    if self._distribute_map[d_x][d_y] != Map.MINE_FLAG:
-                        self._distribute_map[d_x][d_y] += 1
+                if self.is_in_map((d_x, d_y)) and self._near_mine_map[d_x][d_y] != Map.MINE_FLAG:
+                        self._near_mine_map[d_x][d_y] += 1
 
-    def is_in_map(self, pos, offset=None):
+    def is_in_map(self, pos, offset=(0, 0)):
         """某一个单元格是否在地图里
         """
-        if offset:
-            x, y = pos[0] + offset[0], pos[1] + offset[1]
-        else:
-            x, y = pos
-        return x in xrange(0, self.height) and y in xrange(0, self.width)
+        return 0 <= pos[0] + offset[0] < self._height and 0 <= pos[1] + offset[1] < self._width
 
     def is_mine(self, pos):
         """判断某一个位置是否是地雷
@@ -103,7 +98,7 @@ class Map(object):
         @param pos:a tuple like (x, y) 
         """
         x, y = pos
-        return self._distribute_map[x][y]
+        return self._near_mine_map[x][y]
 
 
 class Game(object):

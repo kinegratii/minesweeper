@@ -84,12 +84,11 @@ class MapBaseFunctionTestCase(unittest.TestCase):
         for pos in mine_list:
             self.assertTrue(self.mine_map.is_in_map(pos))
 
-    def test_distribute_map(self):
+    def test_near_mine_map(self):
         mine_pos_list = [(2, 5), (3, 2), (1, 3)]
         mine_map = minesweeper.Map(5, 6, mine_pos_list=mine_pos_list)
-        test_distribute_map = mine_map.distribute_map
         for x, y in mine_pos_list:
-            self.assertEqual(test_distribute_map[x][y], -1)
+            self.assertEqual(mine_map.near_mine_map[x][y], -1)
 
 
 class GamePlayTestCase(unittest.TestCase):
