@@ -24,7 +24,7 @@ class App(tk.Frame):
         tk.Frame.__init__(self)
         self.master.title(settings.APP_NAME)
         self.master.resizable(False, False)
-        self.master.iconbitmap(os.path.join(settings.STATIC_DIR,'images','mine.ico'))
+        self.master.iconbitmap(settings.images('mine.ico'))
         self.pack(expand=tk.NO, fill=tk.BOTH)
         self.map_frame = None
         mine_map = LevelMapConfig.level_map(LevelMapConfig.LEVEL_BEGINNER)

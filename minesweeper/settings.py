@@ -14,3 +14,9 @@ GITHUB_URL = 'http://github.com/kinegratii/minesweeper'
 
 OSC_URL = 'http://git.oschina.net/kinegratii/minesweeper'
 
+
+def static(file_path):
+    return os.path.join(STATIC_DIR, file_path)
+
+def images(img_path):
+    return os.path.join(STATIC_DIR, 'images', img_path)
