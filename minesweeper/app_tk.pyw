@@ -7,11 +7,10 @@ import webbrowser
 import Tkinter as tk
 import tkMessageBox
 
-import settings
 from core import Game
 from helpers import LevelMapConfig
 from helpers import create_from_mine_number
-from style import ButtonStyle
+import static
 import textView
 from widgets import CounterLabel
 from widgets import TimerLabel
@@ -22,9 +21,9 @@ from widgets import MessageLabel
 class App(tk.Frame):
     def __init__(self):
         tk.Frame.__init__(self)
-        self.master.title(settings.APP_NAME)
+        self.master.title(static.APP_NAME)
         self.master.resizable(False, False)
-        self.master.iconbitmap(settings.images('mine.ico'))
+        self.master.iconbitmap(static.images('mine.ico'))
         self.pack(expand=tk.NO, fill=tk.BOTH)
         self.map_frame = None
         mine_map = LevelMapConfig.level_map(LevelMapConfig.LEVEL_BEGINNER)
@@ -89,14 +88,10 @@ class App(tk.Frame):
         self.quit()
 
     def show_project_homepage(self):
-        webbrowser.open_new_tab(settings.OSC_URL)
+        webbrowser.open_new_tab(static.OSC_URL)
 
     def show_about_info(self):
-        self.display_file_text('关于', 'project.txt')
-
-    def display_file_text(self, title, filename, encoding=None):
-        fn = os.path.join(settings.STATIC_DIR, filename)
-        textView.view_file(self, title, fn, encoding)
+        textView.view_file(self, '关于', static.static_file('project.txt'))
 
 
 class GameFrame(tk.Frame):
@@ -112,7 +107,7 @@ class GameFrame(tk.Frame):
             for y in xrange(0, width):
                 self.bt_map[x][y] = tk.Button(self.map_frame, text='', width=3, height=1,
                                               command=lambda x=x, y=y: self.sweep_mine(x, y))
-                self.bt_map[x][y].config(ButtonStyle.grid_unknown_style)
+                self.bt_map[x][y].config(static.style('grid.unknown'))
 
                 def _mark_mine(event, self=self, x=x, y=y):
                     return self.mark_grid_as_mine(event, x, y)
@@ -205,15 +200,15 @@ class GameFrame(tk.Frame):
             for j in xrange(0, self.game.width):
                 if self.game.swept_state_map[i][j]:
                     if self.game.mine_map.is_mine((i, j)):
-                        self.bt_map[i][j].config(ButtonStyle.grid_mine_style)
+                        self.bt_map[i][j].config(static.style('grid.mine'))
                     else:
                         tmp = self.game.mine_map.distribute_map[i][j]
-                        self.bt_map[i][j].config(ButtonStyle.grid_swept_style(tmp))
+                        self.bt_map[i][j].config(static.style('grid.swept', num=tmp))
                 else:
                     if self.bt_map[i][j]['text'] == '?':
-                        self.bt_map[i][j].config(ButtonStyle.grid_marked_style)
+                        self.bt_map[i][j].config(static.style('grid.marked'))
                     else:
-                        self.bt_map[i][j].config(ButtonStyle.grid_unknown_style)
+                        self.bt_map[i][j].config(static.style('grid.unknown'))
 
 
 def main():
