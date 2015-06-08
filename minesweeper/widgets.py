@@ -140,3 +140,72 @@ class MessageLabel(tk.Label):
 
     def _clear(self):
         self.config({'text': ''})
+
+
+
+class TextViewer(tk.Toplevel):
+    """A simple text viewer dialog for IDLE
+
+    """
+
+    def __init__(self, parent, title, text, modal=True):
+        """Show the given text in a scrollable window with a 'close' button
+
+        """
+        tk.Toplevel.__init__(self, parent)
+        self.configure(borderwidth=5)
+        self.geometry("=%dx%d+%d+%d" % (625, 500,
+                                        parent.winfo_rootx() + 10,
+                                        parent.winfo_rooty() + 10))
+        # elguavas - config placeholders til config stuff completed
+        self.bg = '#ffffff'
+        self.fg = '#000000'
+
+        self.CreateWidgets()
+        self.title(title)
+        self.protocol("WM_DELETE_WINDOW", self.Ok)
+        self.parent = parent
+        self.textView.focus_set()
+        #key bindings for this dialog
+        self.bind('<Return>', self.Ok)  #dismiss dialog
+        self.bind('<Escape>', self.Ok)  #dismiss dialog
+        self.textView.insert(0.0, text)
+        self.textView.config(state=tk.DISABLED)
+
+        if modal:
+            self.transient(parent)
+            self.grab_set()
+            self.wait_window()
+
+    def CreateWidgets(self):
+        frameText = tk.Frame(self, relief=tk.SUNKEN, height=700)
+        frameButtons = tk.Frame(self)
+        self.buttonOk = tk.Button(frameButtons, text='Close',
+                               command=self.Ok, takefocus=tk.FALSE)
+        self.scrollbarView = tk.Scrollbar(frameText, orient=tk.VERTICAL,
+                                       takefocus=tk.FALSE, highlightthickness=0)
+        self.textView = tk.Text(frameText, wrap=tk.WORD, highlightthickness=0,
+                             fg=self.fg, bg=self.bg)
+        self.scrollbarView.config(command=self.textView.yview)
+        self.textView.config(yscrollcommand=self.scrollbarView.set)
+        self.buttonOk.pack()
+        self.scrollbarView.pack(side=tk.RIGHT, fill=tk.Y)
+        self.textView.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
+        frameButtons.pack(side=tk.BOTTOM, fill=tk.X)
+        frameText.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
+
+    def Ok(self, event=None):
+        self.destroy()
+
+def view_file(parent, title, filename, encoding=None, modal=True):
+    try:
+        textFile = open(filename, 'r')
+    except IOError:
+        import tkMessageBox
+
+        tkMessageBox.showerror(title='File Load Error',
+                               message='Unable to load file %r .' % filename,
+                               parent=parent)
+    else:
+        return TextViewer(parent, title, textFile.read(), modal)
+

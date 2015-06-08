@@ -11,11 +11,11 @@ from core import Game
 from helpers import LevelMapConfig
 from helpers import create_from_mine_number
 import static
-import textView
 from widgets import CounterLabel
 from widgets import TimerLabel
 from widgets import MapParamsInputDialog
 from widgets import MessageLabel
+from widgets import view_file
 
 
 class App(tk.Frame):
@@ -91,7 +91,7 @@ class App(tk.Frame):
         webbrowser.open_new_tab(static.OSC_URL)
 
     def show_about_info(self):
-        textView.view_file(self, '关于', static.static_file('project.txt'))
+        view_file(self, '关于', static.static_file('project.txt'))
 
 
 class GameFrame(tk.Frame):
