@@ -8,14 +8,11 @@ import Tkinter as tk
 import tkMessageBox
 
 from core import Game
+from helpers import GameHelpers
 from helpers import LevelMapConfig
-from helpers import create_from_mine_number
+import widgets
 import static
-from widgets import CounterLabel
-from widgets import TimerLabel
-from widgets import MapParamsInputDialog
-from widgets import MessageLabel
-from widgets import view_file
+
 
 
 class App(tk.Frame):
@@ -78,7 +75,7 @@ class App(tk.Frame):
             'height':self.map_frame.game.height,
             'mine_number':self.map_frame.game.mine_number
         }
-        return MapParamsInputDialog(self, callback=App.get_map_params,initial=params)
+        return widgets.MapParamsInputDialog(self, callback=App.get_map_params,initial=params)
 
     def get_map_params(self, params_dict):
         new_map = create_from_mine_number(**params_dict)
@@ -91,7 +88,7 @@ class App(tk.Frame):
         webbrowser.open_new_tab(static.OSC_URL)
 
     def show_about_info(self):
-        view_file(self, '关于', static.static_file('project.txt'))
+        widgets.view_file(self, '关于', static.static_file('project.txt'))
 
 
 class GameFrame(tk.Frame):
@@ -135,21 +132,21 @@ class GameFrame(tk.Frame):
         self.info_frame.pack(side=tk.TOP, fill=tk.X, expand=tk.YES, padx=10, pady=5)
         self.step_text_label = tk.Label(self.info_frame, text='步数')
         self.step_text_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
-        self.step_count_label = CounterLabel(self.info_frame, init_value=0, step=1)
+        self.step_count_label = widgets.CounterLabel(self.info_frame, init_value=0, step=1)
         self.step_count_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
         self.flag_text_label = tk.Label(self.info_frame, text='地雷标记')
         self.flag_text_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
-        self.flag_count_label = CounterLabel(self.info_frame, init_value=0, step=1)
+        self.flag_count_label = widgets.CounterLabel(self.info_frame, init_value=0, step=1)
         self.flag_count_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
         self.timer_text_label = tk.Label(self.info_frame, text='时间')
         self.timer_text_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
-        self.timer_count_label = TimerLabel(self.info_frame)
+        self.timer_count_label = widgets.TimerLabel(self.info_frame)
         self.timer_count_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
-        self.msg_label = MessageLabel(self.info_frame)
+        self.msg_label = widgets.MessageLabel(self.info_frame)
         self.msg_label.pack(side=tk.RIGHT)
 
     def start(self):
-        mine_map = create_from_mine_number(self.game.height, self.game.width, self.game.mine_number)
+        mine_map = GameHelpers.create_from_mine_number(self.game.height, self.game.width, self.game.mine_number)
         self.game = Game(mine_map)
         self._draw_map()
         self.step_count_label.set_counter_value()

@@ -8,18 +8,17 @@ import random
 from core import Map
 
 
-def create_from_mine_index_list(height, width, mine_index_list):
-    """根据地雷序号创建地图
-    """
-    return Map(height, width, ((index / width, index % width) for index in mine_index_list))
-
-
-def create_from_mine_number(height, width, mine_number):
-    """创建随机地图
-    """
-    map_size = height * width
-    mine_index_list = random.sample(xrange(0, map_size), mine_number)
-    return create_from_mine_index_list(height, width, mine_index_list)
+class GameHelpers(object):
+    
+    @staticmethod
+    def create_from_mine_index_list(height, width, mine_index_list):
+        return Map(height, width, ((index / width, index % width) for index in mine_index_list))
+    
+    @staticmethod
+    def create_from_mine_number(height, width, mine_number):
+        map_size = height * width
+        mine_index_list = random.sample(xrange(0, map_size), mine_number)
+        return GameHelpers.create_from_mine_index_list(height, width, mine_index_list)
 
 
 class LevelMapConfig(object):
