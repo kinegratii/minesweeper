@@ -9,7 +9,7 @@ import tkMessageBox
 
 from core import Game
 from helpers import GameHelpers
-from helpers import LevelMapConfig
+from helpers import level_config
 import widgets
 import static
 
@@ -23,7 +23,7 @@ class App(tk.Frame):
         self.master.iconbitmap(static.images('mine.ico'))
         self.pack(expand=tk.NO, fill=tk.BOTH)
         self.map_frame = None
-        mine_map = LevelMapConfig.level_map(LevelMapConfig.LEVEL_BEGINNER)
+        mine_map = level_config.map('simple')
         self._create_map_frame(mine_map)
         self.create_top_menu()
 
@@ -41,9 +41,9 @@ class App(tk.Frame):
 
         map_menu = tk.Menu(menu_bar)
         level_menu = tk.Menu(map_menu)
-        self.level = tk.IntVar()
-        self.level.set(LevelMapConfig.LEVEL_BEGINNER)
-        for level, label in LevelMapConfig.CHOICES:
+        self.level = tk.StringVar()
+        self.level.set('simple')
+        for level, label in level_config.choices:
             level_menu.add_radiobutton(label=label,
                                        variable=self.level,
                                        value=level,
@@ -60,7 +60,7 @@ class App(tk.Frame):
 
     def select_map_level(self):
         level = self.level.get()
-        mine_map = LevelMapConfig.level_map(level)
+        mine_map = level_config.map(level)
         self._create_map_frame(mine_map)
 
     def _create_map_frame(self, mine_map):

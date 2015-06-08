@@ -8,8 +8,7 @@ Update on 2014.05.04
 import unittest
 from core import Map
 from core import Game
-from helpers import create_from_mine_number
-from helpers import create_from_mine_index_list
+from helpers import GameHelpers
 
 
 class MapCreateTestCase(unittest.TestCase):
@@ -45,7 +44,7 @@ class MapCreateTestCase(unittest.TestCase):
         """Test creating map with valid mine index.
         """
         for data in self.valid_index_data:
-            m = create_from_mine_index_list(self.height, self.width, data['mine_index_list'])
+            m = GameHelpers.create_from_mine_index_list(self.height, self.width, data['mine_index_list'])
             self.assertEqual(m.mine_number, data['mine_number'])
 
     def test_mine_valid_pos(self):
@@ -59,7 +58,7 @@ class MapCreateTestCase(unittest.TestCase):
         """Test creating map with valid mine number.
         """
         for data in self.valid_number_data:
-            m = create_from_mine_number(self.height, self.width, data)
+            m = GameHelpers.create_from_mine_number(self.height, self.width, data)
             self.assertEqual(m.mine_number, data)
 
 
@@ -72,7 +71,7 @@ class MapCreateTestCase(unittest.TestCase):
 
 class MapBaseFunctionTestCase(unittest.TestCase):
     def setUp(self):
-        self.mine_map = create_from_mine_number(5, 6, 6)
+        self.mine_map = GameHelpers.create_from_mine_number(5, 6, 6)
 
     def tearDown(self):
         self.mine_map = None
