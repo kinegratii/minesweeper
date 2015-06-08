@@ -6,7 +6,8 @@ Test cases for creating map and playing minesweeper game.
 Update on 2014.05.04
 """
 import unittest
-import minesweeper
+from core import Map
+from core import Game
 from helpers import create_from_mine_number
 from helpers import create_from_mine_index_list
 
@@ -51,7 +52,7 @@ class MapCreateTestCase(unittest.TestCase):
         """Test creating map with valid mine position.
         """
         for data in self.valid_pos_data:
-            m = minesweeper.Map(self.height, self.width, data['mine_pos_list'])
+            m = Map(self.height, self.width, data['mine_pos_list'])
             self.assertEqual(m.mine_number, data['mine_number'])
 
     def test_mine_valid_number(self):
@@ -65,7 +66,7 @@ class MapCreateTestCase(unittest.TestCase):
     def create_map(self, mine_pos_list):
         """convert constructing Map object to a callable function for self.assertRaises statement
         """
-        m = minesweeper.Map(self.height, self.width, mine_pos_list)
+        m = Map(self.height, self.width, mine_pos_list)
         return m
 
 
@@ -86,7 +87,7 @@ class MapBaseFunctionTestCase(unittest.TestCase):
 
     def test_distribute_map(self):
         mine_pos_list = [(2, 5), (3, 2), (1, 3)]
-        mine_map = minesweeper.Map(5, 6, mine_pos_list=mine_pos_list)
+        mine_map = Map(5, 6, mine_pos_list=mine_pos_list)
         test_distribute_map = mine_map.distribute_map
         for x, y in mine_pos_list:
             self.assertEqual(test_distribute_map[x][y], -1)
@@ -97,7 +98,7 @@ class GamePlayTestCase(unittest.TestCase):
         pass
 
     def test_move_a(self):
-        mine_map = minesweeper.Map(3, 4, mine_pos_list=[(0, 0)])
+        mine_map = Map(3, 4, mine_pos_list=[(0, 0)])
         test_data_cases = [
             {
                 'click_trace': [(0, 1), (1, 0)],
@@ -111,7 +112,7 @@ class GamePlayTestCase(unittest.TestCase):
             }
         ]
         for data in test_data_cases:
-            game = minesweeper.Game(mine_map)
+            game = Game(mine_map)
             self.batch_click(game, data['click_trace'])
             self.assertEqual(game.state, data['state'])
             self.assertEqual(game.cur_step, data['cur_step'])
@@ -122,8 +123,8 @@ class GamePlayTestCase(unittest.TestCase):
         ##@##  01@10
         #####  01110
         """
-        mine_map = minesweeper.Map(5, 5, mine_pos_list=[(2, 2)])
-        game = minesweeper.Game(mine_map)
+        mine_map = Map(5, 5, mine_pos_list=[(2, 2)])
+        game = Game(mine_map)
         state = game._sweep((0, 0))
         self.assertEqual(state, 2)
 
@@ -147,12 +148,12 @@ class BaseMapTestCase(unittest.TestCase):
         ##@##  01@10
         #####  01110
         """
-        self.mine_map = minesweeper.Map(5, 5, [(2, 2)])
+        self.mine_map = Map(5, 5, [(2, 2)])
 
     def test_one_step_success(self):
         click_list = [(0, 0), (0, 4), (4, 0), (4, 4)]
         for click_pos in click_list:
-            game = minesweeper.Game(self.mine_map)
+            game = Game(self.mine_map)
             state = game._sweep(click_pos)
             self.assertEqual(state, 2)
 

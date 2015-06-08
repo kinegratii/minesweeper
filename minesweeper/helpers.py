@@ -5,7 +5,7 @@ This module contains some hard-coding data for level map.
 
 import random
 
-from minesweeper import Map
+from core import Map
 
 
 def create_from_mine_index_list(height, width, mine_index_list):

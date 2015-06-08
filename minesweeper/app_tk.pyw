@@ -8,15 +8,15 @@ import Tkinter as tk
 import tkMessageBox
 
 import settings
-from core.minesweeper import Game
-from core.helpers import LevelMapConfig
-from core.helpers import create_from_mine_number
-from widgets.style import ButtonStyle
-from widgets import textView
-from widgets.widgets import CounterLabel
-from widgets.widgets import TimerLabel
-from widgets.widgets import MapParamsInputDialog
-from widgets.widgets import MessageLabel
+from core import Game
+from helpers import LevelMapConfig
+from helpers import create_from_mine_number
+from style import ButtonStyle
+import textView
+from widgets import CounterLabel
+from widgets import TimerLabel
+from widgets import MapParamsInputDialog
+from widgets import MessageLabel
 
 
 class App(tk.Frame):
