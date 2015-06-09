@@ -1,7 +1,11 @@
 # coding=utf8
 
+from __future__ import unicode_literals
 
-import Tkinter as tk
+
+from py2compat import tkinter as tk
+from py2compat import messagebox
+from py2compat import open
 
 
 class CounterLabel(tk.Label):
@@ -199,11 +203,9 @@ class TextViewer(tk.Toplevel):
 
 def view_file(parent, title, filename, encoding=None, modal=True):
     try:
-        textFile = open(filename, 'r')
+        textFile = open(filename, 'r', encoding='utf-8')
     except IOError:
-        import tkMessageBox
-
-        tkMessageBox.showerror(title='File Load Error',
+        messagebox.showerror(title='File Load Error',
                                message='Unable to load file %r .' % filename,
                                parent=parent)
     else:

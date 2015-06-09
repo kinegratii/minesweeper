@@ -1,4 +1,6 @@
 # coding=utf8
+from __future__ import unicode_literals
+from py2compat import reduce
 
 import os
 

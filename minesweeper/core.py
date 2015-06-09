@@ -4,7 +4,9 @@
 @Version:1.0.1
 Update on 2014.05.04
 """
-import Queue
+from __future__ import unicode_literals
+from py2compat import queue
+from py2compat import range
 
 
 class Map(object):
@@ -46,7 +48,7 @@ class Map(object):
     # Some base functions.Use self.height instead of self._height etc.
 
     def _generate_distribute_map(self):
-        self._distribute_map = [[0 for i in xrange(0, self.width)] for i in xrange(0, self.height)]
+        self._distribute_map = [[0 for i in range(0, self.width)] for i in range(0, self.height)]
         offset_step = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1)]
         for t_x, t_y in self.mine_list:
             self._distribute_map[t_x][t_y] = Map.MINE_FLAG
@@ -61,7 +63,7 @@ class Map(object):
             x, y = pos[0] + offset[0], pos[1] + offset[1]
         else:
             x, y = pos
-        return x in xrange(0, self.height) and y in xrange(0, self.width)
+        return x in range(0, self.height) and y in range(0, self.width)
 
     def is_mine(self, pos):
         return pos in self.mine_list
@@ -81,8 +83,8 @@ class Game(object):
         self._init_game()
 
     def _init_game(self):
-        self._swept_state_map = [[False for i in xrange(0, self._mine_map.width)] for i in
-                                 xrange(0, self._mine_map.height)]
+        self._swept_state_map = [[False for i in range(0, self._mine_map.width)] for i in
+                                 range(0, self._mine_map.height)]
         self._not_swept_number = self._mine_map.map_size
         self._cur_step = 0
         self._sweep_trace = []
@@ -158,7 +160,7 @@ class Game(object):
         else:
             scan_step = [(-1, 0), (0, 1), (1, 0), (0, -1)]
             assert near_mine_number == 0
-            q = Queue.Queue()
+            q = queue.Queue()
             q.put(click_pos)
             self._not_swept_number -= 1
             self._swept_state_map[cx][cy] = True
@@ -191,6 +193,6 @@ class Game(object):
         return state
 
     def _sweep_all_map(self):
-        self._swept_state_map = [[True for i in xrange(0, self.width)] for i in xrange(0, self.height)]
+        self._swept_state_map = [[True for i in range(0, self.width)] for i in range(0, self.height)]
         self._not_swept_number = self.mine_map.map_size - self.mine_map.mine_number
 

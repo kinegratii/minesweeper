@@ -5,6 +5,8 @@ Test cases for creating map and playing minesweeper game.
 @Version:1.0.1
 Update on 2014.05.04
 """
+from __future__ import unicode_literals
+
 import unittest
 from core import Map
 from core import Game

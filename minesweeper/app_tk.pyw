@@ -2,10 +2,12 @@
 """
 由Tkinter实现的扫雷GUI
 """
-import os
+from __future__ import unicode_literals
+from py2compat import tkinter as tk
+from py2compat import messagebox
+from py2compat import range
+
 import webbrowser
-import Tkinter as tk
-import tkMessageBox
 
 from core import Game
 from helpers import GameHelpers
@@ -78,7 +80,7 @@ class App(tk.Frame):
         return widgets.MapParamsInputDialog(self, callback=App.get_map_params,initial=params)
 
     def get_map_params(self, params_dict):
-        new_map = create_from_mine_number(**params_dict)
+        new_map = GameHelpers.create_from_mine_number(**params_dict)
         self._create_map_frame(new_map)
 
     def exit_app(self):
@@ -99,9 +101,9 @@ class GameFrame(tk.Frame):
         self.map_frame.pack(side=tk.TOP, expand=tk.YES, padx=10, pady=10)
         self.game = Game(mine_map)
         height, width = mine_map.height, mine_map.width
-        self.bt_map = [[None for i in xrange(0, width)] for i in xrange(0, height)]
-        for x in xrange(0, height):
-            for y in xrange(0, width):
+        self.bt_map = [[None for i in range(0, width)] for i in range(0, height)]
+        for x in range(0, height):
+            for y in range(0, width):
                 self.bt_map[x][y] = tk.Button(self.map_frame, text='', width=3, height=1,
                                               command=lambda x=x, y=y: self.sweep_mine(x, y))
                 self.bt_map[x][y].config(static.style('grid.unknown'))
@@ -125,7 +127,7 @@ class GameFrame(tk.Frame):
 
     def _show_map_info(self):
         map_info_str = '当前地图大小：%d X %d\n地雷数目：%d' % (self.game.height, self.game.width, self.game.mine_number)
-        tkMessageBox.showinfo('当前地图', map_info_str, parent=self)
+        messagebox.showinfo('当前地图', map_info_str, parent=self)
 
     def _create_info_frame(self):
         self.info_frame = tk.Frame(self, relief=tk.GROOVE, borderwidth=2)
@@ -173,11 +175,11 @@ class GameFrame(tk.Frame):
         if state == Game.STATE_SUCCESS:
             self.timer_count_label.stop_timer()
             self.msg_label.splash('很遗憾，游戏失败')
-            tkMessageBox.showinfo('提示', '恭喜你通关了！', parent=self)
+            messagebox.showinfo('提示', '恭喜你通关了！', parent=self)
         elif state == Game.STATE_FAIL:
             self.timer_count_label.stop_timer()
             self.msg_label.splash('很遗憾，游戏失败')
-            tkMessageBox.showerror('提示', '很遗憾，游戏失败！', parent=self)
+            messagebox.showerror('提示', '很遗憾，游戏失败！', parent=self)
 
     def mark_grid_as_mine(self, event, x, y):
         if self.game.state == Game.STATE_PLAY and not self.game.swept_state_map[x][y]:
@@ -193,8 +195,8 @@ class GameFrame(tk.Frame):
 
     def _draw_map(self):
         # 重画地图
-        for i in xrange(0, self.game.height):
-            for j in xrange(0, self.game.width):
+        for i in range(0, self.game.height):
+            for j in range(0, self.game.width):
                 if self.game.swept_state_map[i][j]:
                     if self.game.mine_map.is_mine((i, j)):
                         self.bt_map[i][j].config(static.style('grid.mine'))
