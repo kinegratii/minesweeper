@@ -174,7 +174,7 @@ class GameFrame(tk.Frame):
         self._draw_map()
         if state == Game.STATE_SUCCESS:
             self.timer_count_label.stop_timer()
-            self.msg_label.splash('很遗憾，游戏失败')
+            self.msg_label.splash('恭喜你，游戏通关了')
             messagebox.showinfo('提示', '恭喜你通关了！', parent=self)
         elif state == Game.STATE_FAIL:
             self.timer_count_label.stop_timer()
