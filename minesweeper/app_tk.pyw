@@ -36,7 +36,7 @@ class App(tk.Frame):
 
         game_menu = tk.Menu(menu_bar)
         game_menu.add_command(label='新游戏', command=self.map_frame.start)
-        game_menu.add_command(label='重置', command=self.map_frame.reset)
+        game_menu.add_command(label='重置游戏', command=self.map_frame.reset)
         game_menu.add_separator()
         game_menu.add_command(label='退出', command=self.exit_app)
         menu_bar.add_cascade(label='游戏', menu=game_menu)
@@ -52,7 +52,7 @@ class App(tk.Frame):
                                        command=self.select_map_level)
         map_menu.add_cascade(label='选择水平', menu=level_menu)
         map_menu.add_separator()
-        map_menu.add_command(label='自定义地图参数', command=self.create_custom_map)
+        map_menu.add_command(label='自定义地图', command=self.create_custom_map)
         menu_bar.add_cascade(label='地图', menu=map_menu)
 
         about_menu = tk.Menu(menu_bar)
@@ -118,11 +118,11 @@ class GameFrame(tk.Frame):
     def _create_controller_frame(self):
         self.controller_bar = tk.LabelFrame(self, text='控制', padx=5,pady=5)
         self.controller_bar.pack(side=tk.TOP, fill=tk.X, expand=tk.YES, padx=10, pady=2)
-        self.start_bt = tk.Button(self.controller_bar, text='新游戏', relief=tk.GROOVE, command=self.start)
+        self.start_bt = tk.Button(self.controller_bar, text='新的游戏', relief=tk.GROOVE, command=self.start)
         self.start_bt.pack(side=tk.LEFT, expand=tk.NO, padx=4)
-        self.reset_bt = tk.Button(self.controller_bar, text='重置', relief=tk.GROOVE, command=self.reset)
+        self.reset_bt = tk.Button(self.controller_bar, text='重置游戏', relief=tk.GROOVE, command=self.reset)
         self.reset_bt.pack(side=tk.LEFT, expand=tk.NO, padx=4)
-        self.map_info_bt = tk.Button(self.controller_bar, text='地图', relief=tk.GROOVE, command=self._show_map_info)
+        self.map_info_bt = tk.Button(self.controller_bar, text='查看地图', relief=tk.GROOVE, command=self._show_map_info)
         self.map_info_bt.pack(side=tk.LEFT, expand=tk.NO, padx=4)
 
     def _show_map_info(self):
