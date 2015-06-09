@@ -12,11 +12,13 @@
 
 ## 运行
 
+> 从v1.3.0开始，增加Python3的支持。因此可在Python2和3下运行本项目。
+
 执行下述命令即可：
 
 ```python
 
-    python app_tk.pyw
+python minesweeper\app_tk.pyw
 ```
 
 ## 算法概述
@@ -41,18 +43,18 @@
 
 比如下面一个地图
 
-```python
+```
 
-	1000
-	0000
-    0101
-    1001
+1000
+0000
+0101
+1001
 ```
 表示为
 
 ```python
 
-	Map(width=4, height=4, mine_list=((0,0),(2,1),(2,3),(3,0),(33)))
+Map(width=4, height=4, mine_list=((0,0),(2,1),(2,3),(3,0),(33)))
 ```
 由这三个属性可以算出其他的属性。
 
@@ -61,12 +63,12 @@
 
 游戏类Game被设计为一个状态机程序，以一个地图Map对象作为数据来源。一个游戏对象除了Map对象之外用相同的二维对象_swept_state_map表示地图相应的位置是否被扫过雷。
 
-```python
+```
 
-    0010
-    0000
-    0010
-    0000
+0010
+0000
+0010
+0000
 ```
 
 在GUI界面中也是根据这个地图改变相应单元格的状态。
@@ -83,16 +85,16 @@
 
 ```python
 
-	self.bt_map[x][y] = tk.Button(self.map_frame,text='',command = lambda x=x,y=y:self._on_click(x,y))
+self.bt_map[x][y] = tk.Button(self.map_frame,text='',command = lambda x=x,y=y:self._on_click(x,y))
 ```
 
 (x,y)处右键点击函数，采用闭包形式将x,y传入响应函数
 
 ```python
             
-	def right_click_handler(event, self=self, x=x, y=y):
-	    return self._on_right_click(event, x, y)
-	self.bt_map[x][y].bind('<Button-3>', right_click_handler)
+def right_click_handler(event, self=self, x=x, y=y):
+    return self._on_right_click(event, x, y)
+self.bt_map[x][y].bind('<Button-3>', right_click_handler)
 ```
 
 2 自动计数控件
@@ -101,21 +103,21 @@ tkinter的每个控件都有after和after_cancel两个方法，分别设置定�
 
 基本方法如下：
 
-```python
+```
 
-    def _timer(self):
-        if self._state:
-            self.increase()
-            self._timer_id = self.after(1000, self._timer)
+def _timer(self):
+    if self._state:
+        self.increase()
+        self._timer_id = self.after(1000, self._timer)
 
-    def start_timer(self):
-        if not self._state:
-            self._state = True
-            self._timer()
+def start_timer(self):
+    if not self._state:
+        self._state = True
+        self._timer()
 
-    def stop_timer(self):
-        self._state = False
-        if self._timer_id:
-            self.after_cancel(self._timer_id)
-            self._timer_id = None
+def stop_timer(self):
+    self._state = False
+    if self._timer_id:
+        self.after_cancel(self._timer_id)
+        self._timer_id = None
 ```

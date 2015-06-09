@@ -2,32 +2,30 @@
 """
 由Tkinter实现的扫雷GUI
 """
-import os
-import webbrowser
-import Tkinter as tk
-import tkMessageBox
+from __future__ import unicode_literals
+from py2compat import tkinter as tk
+from py2compat import messagebox
+from py2compat import range
 
-import settings
-from core.minesweeper import Game
-from core.helpers import LevelMapConfig
-from core.helpers import create_from_mine_number
-from widgets.style import ButtonStyle
-from widgets import textView
-from widgets.widgets import CounterLabel
-from widgets.widgets import TimerLabel
-from widgets.widgets import MapParamsInputDialog
-from widgets.widgets import MessageLabel
+import webbrowser
+
+from core import Game
+from helpers import GameHelpers
+from helpers import level_config
+import widgets
+import static
+
 
 
 class App(tk.Frame):
     def __init__(self):
         tk.Frame.__init__(self)
-        self.master.title(settings.APP_NAME)
+        self.master.title(static.APP_NAME)
         self.master.resizable(False, False)
-        self.master.iconbitmap(os.path.join(settings.STATIC_DIR,'images','mine.ico'))
+        self.master.iconbitmap(static.images('mine.ico'))
         self.pack(expand=tk.NO, fill=tk.BOTH)
         self.map_frame = None
-        mine_map = LevelMapConfig.level_map(LevelMapConfig.LEVEL_BEGINNER)
+        mine_map = level_config.map('simple')
         self._create_map_frame(mine_map)
         self.create_top_menu()
 
@@ -45,9 +43,9 @@ class App(tk.Frame):
 
         map_menu = tk.Menu(menu_bar)
         level_menu = tk.Menu(map_menu)
-        self.level = tk.IntVar()
-        self.level.set(LevelMapConfig.LEVEL_BEGINNER)
-        for level, label in LevelMapConfig.CHOICES:
+        self.level = tk.StringVar()
+        self.level.set('simple')
+        for level, label in level_config.choices:
             level_menu.add_radiobutton(label=label,
                                        variable=self.level,
                                        value=level,
@@ -64,7 +62,7 @@ class App(tk.Frame):
 
     def select_map_level(self):
         level = self.level.get()
-        mine_map = LevelMapConfig.level_map(level)
+        mine_map = level_config.map(level)
         self._create_map_frame(mine_map)
 
     def _create_map_frame(self, mine_map):
@@ -79,24 +77,20 @@ class App(tk.Frame):
             'height':self.map_frame.game.height,
             'mine_number':self.map_frame.game.mine_number
         }
-        return MapParamsInputDialog(self, callback=App.get_map_params,initial=params)
+        return widgets.MapParamsInputDialog(self, callback=App.get_map_params,initial=params)
 
     def get_map_params(self, params_dict):
-        new_map = create_from_mine_number(**params_dict)
+        new_map = GameHelpers.create_from_mine_number(**params_dict)
         self._create_map_frame(new_map)
 
     def exit_app(self):
         self.quit()
 
     def show_project_homepage(self):
-        webbrowser.open_new_tab(settings.OSC_URL)
+        webbrowser.open_new_tab(static.OSC_URL)
 
     def show_about_info(self):
-        self.display_file_text('关于', 'project.txt')
-
-    def display_file_text(self, title, filename, encoding=None):
-        fn = os.path.join(settings.STATIC_DIR, filename)
-        textView.view_file(self, title, fn, encoding)
+        widgets.view_file(self, '关于', static.static_file('project.txt'))
 
 
 class GameFrame(tk.Frame):
@@ -107,12 +101,12 @@ class GameFrame(tk.Frame):
         self.map_frame.pack(side=tk.TOP, expand=tk.YES, padx=10, pady=10)
         self.game = Game(mine_map)
         height, width = mine_map.height, mine_map.width
-        self.bt_map = [[None for i in xrange(0, width)] for i in xrange(0, height)]
-        for x in xrange(0, height):
-            for y in xrange(0, width):
+        self.bt_map = [[None for i in range(0, width)] for i in range(0, height)]
+        for x in range(0, height):
+            for y in range(0, width):
                 self.bt_map[x][y] = tk.Button(self.map_frame, text='', width=3, height=1,
                                               command=lambda x=x, y=y: self.sweep_mine(x, y))
-                self.bt_map[x][y].config(ButtonStyle.grid_unknown_style)
+                self.bt_map[x][y].config(static.style('grid.unknown'))
 
                 def _mark_mine(event, self=self, x=x, y=y):
                     return self.mark_grid_as_mine(event, x, y)
@@ -133,28 +127,28 @@ class GameFrame(tk.Frame):
 
     def _show_map_info(self):
         map_info_str = '当前地图大小：%d X %d\n地雷数目：%d' % (self.game.height, self.game.width, self.game.mine_number)
-        tkMessageBox.showinfo('当前地图', map_info_str, parent=self)
+        messagebox.showinfo('当前地图', map_info_str, parent=self)
 
     def _create_info_frame(self):
         self.info_frame = tk.Frame(self, relief=tk.GROOVE, borderwidth=2)
         self.info_frame.pack(side=tk.TOP, fill=tk.X, expand=tk.YES, padx=10, pady=5)
         self.step_text_label = tk.Label(self.info_frame, text='步数')
         self.step_text_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
-        self.step_count_label = CounterLabel(self.info_frame, init_value=0, step=1)
+        self.step_count_label = widgets.CounterLabel(self.info_frame, init_value=0, step=1)
         self.step_count_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
         self.flag_text_label = tk.Label(self.info_frame, text='地雷标记')
         self.flag_text_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
-        self.flag_count_label = CounterLabel(self.info_frame, init_value=0, step=1)
+        self.flag_count_label = widgets.CounterLabel(self.info_frame, init_value=0, step=1)
         self.flag_count_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
         self.timer_text_label = tk.Label(self.info_frame, text='时间')
         self.timer_text_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
-        self.timer_count_label = TimerLabel(self.info_frame)
+        self.timer_count_label = widgets.TimerLabel(self.info_frame)
         self.timer_count_label.pack(side=tk.LEFT, fill=tk.X, expand=tk.NO)
-        self.msg_label = MessageLabel(self.info_frame)
+        self.msg_label = widgets.MessageLabel(self.info_frame)
         self.msg_label.pack(side=tk.RIGHT)
 
     def start(self):
-        mine_map = create_from_mine_number(self.game.height, self.game.width, self.game.mine_number)
+        mine_map = GameHelpers.create_from_mine_number(self.game.height, self.game.width, self.game.mine_number)
         self.game = Game(mine_map)
         self._draw_map()
         self.step_count_label.set_counter_value()
@@ -181,11 +175,11 @@ class GameFrame(tk.Frame):
         if state == Game.STATE_SUCCESS:
             self.timer_count_label.stop_timer()
             self.msg_label.splash('很遗憾，游戏失败')
-            tkMessageBox.showinfo('提示', '恭喜你通关了！', parent=self)
+            messagebox.showinfo('提示', '恭喜你通关了！', parent=self)
         elif state == Game.STATE_FAIL:
             self.timer_count_label.stop_timer()
             self.msg_label.splash('很遗憾，游戏失败')
-            tkMessageBox.showerror('提示', '很遗憾，游戏失败！', parent=self)
+            messagebox.showerror('提示', '很遗憾，游戏失败！', parent=self)
 
     def mark_grid_as_mine(self, event, x, y):
         if self.game.state == Game.STATE_PLAY and not self.game.swept_state_map[x][y]:
@@ -201,19 +195,19 @@ class GameFrame(tk.Frame):
 
     def _draw_map(self):
         # 重画地图
-        for i in xrange(0, self.game.height):
-            for j in xrange(0, self.game.width):
+        for i in range(0, self.game.height):
+            for j in range(0, self.game.width):
                 if self.game.swept_state_map[i][j]:
                     if self.game.mine_map.is_mine((i, j)):
-                        self.bt_map[i][j].config(ButtonStyle.grid_mine_style)
+                        self.bt_map[i][j].config(static.style('grid.mine'))
                     else:
-                        tmp = self.game.mine_map.near_mine_map[i][j]
-                        self.bt_map[i][j].config(ButtonStyle.grid_swept_style(tmp))
+                        tmp = self.game.mine_map.distribute_map[i][j]
+                        self.bt_map[i][j].config(static.style('grid.swept', num=tmp))
                 else:
                     if self.bt_map[i][j]['text'] == '?':
-                        self.bt_map[i][j].config(ButtonStyle.grid_marked_style)
+                        self.bt_map[i][j].config(static.style('grid.marked'))
                     else:
-                        self.bt_map[i][j].config(ButtonStyle.grid_unknown_style)
+                        self.bt_map[i][j].config(static.style('grid.unknown'))
 
 
 def main():
