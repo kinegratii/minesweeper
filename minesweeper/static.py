@@ -39,14 +39,14 @@ class GridStyle(object):
     @staticmethod
     def swept(num):
         colors = ['#BBBBBB',
-                  '#0000FF',
-                  '#00FF00',
-                  '#EE0000',
-                  '#FF00FF',
-                  '#B22222',
-                  '#FFFF00',
-                  '#FFBBCC',
-                  '#DDCC00'
+                  '#000000',
+                  '#0602E7',
+                  '#F52703',
+                  '#6F3F17',
+                  '#FFFE07',
+                  '#FF12FF',
+                  '#3EE8D3',
+                  '#FDFCD6'
                   ]
         return {'relief': 'sunken', 'text': num or ' ', 'bg': '#DDDDDD', 'fg': colors[num]}
 
