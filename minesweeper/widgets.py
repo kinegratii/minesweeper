@@ -148,14 +148,8 @@ class MessageLabel(tk.Label):
 
 
 class TextViewer(tk.Toplevel):
-    """A simple text viewer dialog for IDLE
-
-    """
 
     def __init__(self, parent, title, text, modal=True):
-        """Show the given text in a scrollable window with a 'close' button
-
-        """
         tk.Toplevel.__init__(self, parent)
         self.configure(borderwidth=5)
         self.geometry("=%dx%d+%d+%d" % (625, 500,
@@ -184,7 +178,7 @@ class TextViewer(tk.Toplevel):
     def CreateWidgets(self):
         frameText = tk.Frame(self, relief=tk.SUNKEN, height=700)
         frameButtons = tk.Frame(self)
-        self.buttonOk = tk.Button(frameButtons, text='Close',
+        self.buttonOk = tk.Button(frameButtons, text='确定',
                                command=self.Ok, takefocus=tk.FALSE)
         self.scrollbarView = tk.Scrollbar(frameText, orient=tk.VERTICAL,
                                        takefocus=tk.FALSE, highlightthickness=0)
