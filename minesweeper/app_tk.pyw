@@ -42,15 +42,15 @@ class App(tk.Frame):
         menu_bar.add_cascade(label='游戏', menu=game_menu)
 
         map_menu = tk.Menu(menu_bar)
-        level_menu = tk.Menu(map_menu)
+        # level_menu = tk.Menu(map_menu)
         self.level = tk.StringVar()
         self.level.set('simple')
         for level, label in level_config.choices:
-            level_menu.add_radiobutton(label=label,
+            map_menu.add_radiobutton(label=label,
                                        variable=self.level,
                                        value=level,
                                        command=self.select_map_level)
-        map_menu.add_cascade(label='选择水平', menu=level_menu)
+        # map_menu.add_cascade(label='选择水平', menu=level_menu)
         map_menu.add_separator()
         map_menu.add_command(label='自定义地图', command=self.create_custom_map)
         menu_bar.add_cascade(label='地图', menu=map_menu)

@@ -56,6 +56,6 @@ class LevelConfig(object):
     
 
 level_config = LevelConfig()
-level_config.add_level_map(name='simple', verbose='新手', height=10, width=10, mine_number=10)
-level_config.add_level_map(name='prefact', verbose='老手', height=20, width=30, mine_number=100)
-level_config.add_level_map(name='great', verbose='专家', height=25, width=40, mine_number=400)
+level_config.add_level_map(name='simple', verbose='初级', height=9, width=9, mine_number=10)
+level_config.add_level_map(name='prefact', verbose='中级', height=20, width=30, mine_number=100)
+level_config.add_level_map(name='great', verbose='高级', height=25, width=40, mine_number=400)
