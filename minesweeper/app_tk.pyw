@@ -42,7 +42,6 @@ class App(tk.Frame):
         menu_bar.add_cascade(label='游戏', menu=game_menu)
 
         map_menu = tk.Menu(menu_bar)
-        # level_menu = tk.Menu(map_menu)
         self.level = tk.StringVar()
         self.level.set('simple')
         for level, label in level_config.choices:
@@ -50,13 +49,12 @@ class App(tk.Frame):
                                        variable=self.level,
                                        value=level,
                                        command=self.select_map_level)
-        # map_menu.add_cascade(label='选择水平', menu=level_menu)
         map_menu.add_separator()
         map_menu.add_command(label='自定义...', command=self.create_custom_map)
         menu_bar.add_cascade(label='地图', menu=map_menu)
 
         about_menu = tk.Menu(menu_bar)
-        about_menu.add_command(label='访问项目主页', command=self.show_project_homepage)
+        about_menu.add_command(label='主页', command=self.show_project_homepage)
         about_menu.add_command(label='关于...', command=self.show_about_info)
         menu_bar.add_cascade(label='关于', menu=about_menu)
 
