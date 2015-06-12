@@ -1,8 +1,8 @@
 # coding=utf8
 from __future__ import unicode_literals
-from py2compat import reduce
-
 import os
+
+from py2compat import reduce
 
 
 APP_NAME = 'Minesweeper v1.3.0'
@@ -23,12 +23,6 @@ def images(img_path):
 
 
 def style(style_name, **kwargs):
-    """
-    >>> style('grid.unknown')
-    {'text': '', 'bg': '#DDDDDD', 'relief': 'raised', 'fg': '#000000'}
-    >>> style('grid.swept', num=2)
-    {'text': 2, 'bg': '#DDDDDD', 'relief': 'sunken', 'fg': '#00FF00'}
-    """
     return _style_loader.style(style_name, **kwargs)
 
 
@@ -58,7 +52,6 @@ class GridStyle(object):
 
 
 class StyleLoader(object):
-
     def style(self, style_name, **kwargs):
         func = reduce(getattr, style_name.split('.'), self)
         return func(**kwargs) if callable(func) else func
@@ -69,8 +62,3 @@ class StyleLoader(object):
 
 _style_loader = StyleLoader()
 _style_loader.register('grid', GridStyle)
-
-if __name__ == '__main__':
-    import doctest
-
-    doctest.testmod()

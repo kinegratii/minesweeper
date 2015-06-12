@@ -48,7 +48,7 @@ class Map(object):
     # Some base functions.Use self.height instead of self._height etc.
 
     def _generate_distribute_map(self):
-        self._distribute_map = [[0 for i in range(0, self.width)] for i in range(0, self.height)]
+        self._distribute_map = [[0 for _ in range(0, self.width)] for _ in range(0, self.height)]
         offset_step = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1)]
         for t_x, t_y in self.mine_list:
             self._distribute_map[t_x][t_y] = Map.MINE_FLAG
@@ -82,7 +82,7 @@ class Game(object):
         self._init_game()
 
     def _init_game(self):
-        self._swept_state_map = [[False for i in range(0, self._mine_map.width)] for i in
+        self._swept_state_map = [[False for _ in range(0, self._mine_map.width)] for _ in
                                  range(0, self._mine_map.height)]
         self._not_swept_number = self._mine_map.map_size
         self._cur_step = 0
@@ -192,6 +192,6 @@ class Game(object):
         return state
 
     def _sweep_all_map(self):
-        self._swept_state_map = [[True for i in range(0, self.width)] for i in range(0, self.height)]
+        self._swept_state_map = [[True for _ in range(0, self.width)] for _ in range(0, self.height)]
         self._not_swept_number = self.mine_map.map_size - self.mine_map.mine_number
 

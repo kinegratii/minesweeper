@@ -3,21 +3,18 @@
 This module contains some hard-coding data for level map.
 """
 from __future__ import unicode_literals
-from py2compat import range
-
-
 import random
 from collections import OrderedDict
 
+from py2compat import range
 from core import Map
 
 
 class GameHelpers(object):
-    
     @staticmethod
     def create_from_mine_index_list(height, width, mine_index_list):
         return Map(height, width, ((index // width, index % width) for index in mine_index_list))
-    
+
     @staticmethod
     def create_from_mine_number(height, width, mine_number):
         map_size = height * width
@@ -32,7 +29,7 @@ class LevelMapMeta(object):
         self.height = height
         self.width = width
         self.mine_number = mine_number
-    
+
     @property
     def description(self):
         return '{0}({1}x{2}-{3})'.format(self.verbose, self.height, self.width, self.mine_number)
@@ -41,21 +38,21 @@ class LevelMapMeta(object):
 class LevelConfig(object):
     def __init__(self):
         self.data = OrderedDict()
-    
+
     def add_level_map(self, name, **kwargs):
-        kwargs.update({'name':name})
+        kwargs.update({'name': name})
         self.data[name] = LevelMapMeta(**kwargs)
-    
+
     @property
     def choices(self):
         return [(l.name, l.description) for l in self.data.values()]
-    
+
     def map(self, name):
         meta = self.data[name]
         return GameHelpers.create_from_mine_number(meta.height, meta.width, meta.mine_number)
-    
+
 
 level_config = LevelConfig()
-level_config.add_level_map(name='simple', verbose='初级', height=9, width=9, mine_number=10)
-level_config.add_level_map(name='prefact', verbose='中级', height=20, width=30, mine_number=100)
-level_config.add_level_map(name='great', verbose='高级', height=25, width=40, mine_number=400)
+level_config.add_level_map(name='primary', verbose='初级', height=9, width=9, mine_number=10)
+level_config.add_level_map(name='secondary', verbose='中级', height=20, width=30, mine_number=100)
+level_config.add_level_map(name='tertiary', verbose='高级', height=25, width=40, mine_number=400)

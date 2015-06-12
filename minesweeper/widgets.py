@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 
-
 from py2compat import tkinter as tk
 from py2compat import messagebox
 from py2compat import open
@@ -71,12 +70,12 @@ class TimerLabel(CounterLabel):
 class MapParamsInputDialog(tk.Toplevel):
     def __init__(self, parent, modal=True, callback=None, initial=None):
         tk.Toplevel.__init__(self, parent)
-        initial = initial or {'width':10,'height':10,'mine_number':10}
+        initial = initial or {'width': 10, 'height': 10, 'mine_number': 10}
         self.height = tk.IntVar(value=initial['height'])
         self.width = tk.IntVar(value=initial['width'])
         self.mine_number = tk.IntVar(value=initial['mine_number'])
         self.validate_msg = tk.StringVar()
-        
+
         self.create_widgets()
         self.parent = parent
         self.title('请输入新地图的参数')
@@ -86,9 +85,7 @@ class MapParamsInputDialog(tk.Toplevel):
         self.callback = callback
 
         if modal:
-            self.geometry("=%dx%d+%d+%d" % (200, 130,
-                                    parent.winfo_rootx() + 10,
-                                    parent.winfo_rooty() + 10))
+            self.geometry("=%dx%d+%d+%d" % (200, 130, parent.winfo_rootx() + 10, parent.winfo_rooty() + 10))
             self.transient(parent)
             self.grab_set()
             self.wait_window()
@@ -104,8 +101,8 @@ class MapParamsInputDialog(tk.Toplevel):
         tk.Entry(frame, textvariable=self.mine_number).grid(column=1, row=2)
         tk.Entry(frame, fg='#FF0000', textvariable=self.validate_msg, state=tk.DISABLED).grid(column=0, row=3,
                                                                                               columnspan=2)
-        tk.Button(frame, text='确定', command=self.ok).grid(column=0, row=4,ipadx=10)
-        tk.Button(frame, text='取消', command=self.quit).grid(column=1, row=4,ipadx=10)
+        tk.Button(frame, text='确定', command=self.ok).grid(column=0, row=4, ipadx=10)
+        tk.Button(frame, text='取消', command=self.quit).grid(column=1, row=4, ipadx=10)
 
     def quit(self):
         self.destroy()
@@ -146,62 +143,52 @@ class MessageLabel(tk.Label):
         self.config({'text': ''})
 
 
-
 class TextViewer(tk.Toplevel):
-
     def __init__(self, parent, title, text, modal=True):
         tk.Toplevel.__init__(self, parent)
         self.configure(borderwidth=5)
-        self.geometry("=%dx%d+%d+%d" % (625, 500,
-                                        parent.winfo_rootx() + 10,
-                                        parent.winfo_rooty() + 10))
-        # elguavas - config placeholders til config stuff completed
+        self.geometry("=%dx%d+%d+%d" % (625, 500, parent.winfo_rootx() + 10, parent.winfo_rooty() + 10))
         self.bg = '#ffffff'
         self.fg = '#000000'
-
-        self.CreateWidgets()
         self.title(title)
-        self.protocol("WM_DELETE_WINDOW", self.Ok)
+        self.protocol("WM_DELETE_WINDOW", self.ok)
         self.parent = parent
-        self.textView.focus_set()
-        #key bindings for this dialog
-        self.bind('<Return>', self.Ok)  #dismiss dialog
-        self.bind('<Escape>', self.Ok)  #dismiss dialog
-        self.textView.insert(0.0, text)
-        self.textView.config(state=tk.DISABLED)
+        self.bind('<Return>', self.ok)
+        self.bind('<Escape>', self.ok)
+        # create widgets
+        frame_text = tk.Frame(self, relief=tk.SUNKEN, height=700)
+        frame_text.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
+
+        scroll_view = tk.Scrollbar(frame_text, orient=tk.VERTICAL, takefocus=tk.FALSE, highlightthickness=0)
+        self.text_view = tk.Text(frame_text, wrap=tk.WORD, highlightthickness=0, fg=self.fg, bg=self.bg)
+        scroll_view.config(command=self.text_view.yview)
+        self.text_view.config(yscrollcommand=scroll_view.set)
+        scroll_view.pack(side=tk.RIGHT, fill=tk.Y)
+        self.text_view.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
+
+        frame_buttons = tk.Frame(self)
+        tk.Button(frame_buttons, text='确定', command=self.ok, takefocus=tk.FALSE).pack()
+        frame_buttons.pack(side=tk.BOTTOM, fill=tk.X)
+
+        # init text
+        self.text_view.focus_set()
+        self.text_view.insert(0.0, text)
+        self.text_view.config(state=tk.DISABLED)
 
         if modal:
             self.transient(parent)
             self.grab_set()
             self.wait_window()
 
-    def CreateWidgets(self):
-        frameText = tk.Frame(self, relief=tk.SUNKEN, height=700)
-        frameButtons = tk.Frame(self)
-        self.buttonOk = tk.Button(frameButtons, text='确定',
-                               command=self.Ok, takefocus=tk.FALSE)
-        self.scrollbarView = tk.Scrollbar(frameText, orient=tk.VERTICAL,
-                                       takefocus=tk.FALSE, highlightthickness=0)
-        self.textView = tk.Text(frameText, wrap=tk.WORD, highlightthickness=0,
-                             fg=self.fg, bg=self.bg)
-        self.scrollbarView.config(command=self.textView.yview)
-        self.textView.config(yscrollcommand=self.scrollbarView.set)
-        self.buttonOk.pack()
-        self.scrollbarView.pack(side=tk.RIGHT, fill=tk.Y)
-        self.textView.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
-        frameButtons.pack(side=tk.BOTTOM, fill=tk.X)
-        frameText.pack(side=tk.TOP, expand=tk.TRUE, fill=tk.BOTH)
-
-    def Ok(self, event=None):
+    def ok(self, event=None):
         self.destroy()
 
-def view_file(parent, title, filename, encoding=None, modal=True):
+
+def view_file(parent, title, filename, modal=True):
     try:
-        textFile = open(filename, 'r', encoding='utf-8')
+        text_file = open(filename, 'r', encoding='utf-8')
     except IOError:
-        messagebox.showerror(title='File Load Error',
-                               message='Unable to load file %r .' % filename,
-                               parent=parent)
+        messagebox.showerror(title='File Load Error', message='Unable to load file %r .' % filename, parent=parent)
     else:
-        return TextViewer(parent, title, textFile.read(), modal)
+        return TextViewer(parent, title, text_file.read(), modal)
 

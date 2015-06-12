@@ -3,18 +3,16 @@
 由Tkinter实现的扫雷GUI
 """
 from __future__ import unicode_literals
+import webbrowser
+
 from py2compat import tkinter as tk
 from py2compat import messagebox
 from py2compat import range
-
-import webbrowser
-
 from core import Game
 from helpers import GameHelpers
 from helpers import level_config
 import widgets
 import static
-
 
 
 class App(tk.Frame):
@@ -43,18 +41,18 @@ class App(tk.Frame):
 
         map_menu = tk.Menu(menu_bar)
         self.level = tk.StringVar()
-        self.level.set('simple')
+        self.level.set('primary')
         for level, label in level_config.choices:
             map_menu.add_radiobutton(label=label,
-                                       variable=self.level,
-                                       value=level,
-                                       command=self.select_map_level)
+                                     variable=self.level,
+                                     value=level,
+                                     command=self.select_map_level)
         map_menu.add_separator()
         map_menu.add_command(label='自定义...', command=self.create_custom_map)
         menu_bar.add_cascade(label='地图', menu=map_menu)
 
         about_menu = tk.Menu(menu_bar)
-        about_menu.add_command(label='主页', command=self.show_project_homepage)
+        about_menu.add_command(label='主页', command=lambda: webbrowser.open_new_tab(static.OSC_URL))
         about_menu.add_command(label='关于...', command=self.show_about_info)
         menu_bar.add_cascade(label='关于', menu=about_menu)
 
@@ -71,11 +69,11 @@ class App(tk.Frame):
 
     def create_custom_map(self):
         params = {
-            'width':self.map_frame.game.width,
-            'height':self.map_frame.game.height,
-            'mine_number':self.map_frame.game.mine_number
+            'width': self.map_frame.game.width,
+            'height': self.map_frame.game.height,
+            'mine_number': self.map_frame.game.mine_number
         }
-        return widgets.MapParamsInputDialog(self, callback=App.get_map_params,initial=params)
+        return widgets.MapParamsInputDialog(self, callback=App.get_map_params, initial=params)
 
     def get_map_params(self, params_dict):
         new_map = GameHelpers.create_from_mine_number(**params_dict)
@@ -83,9 +81,6 @@ class App(tk.Frame):
 
     def exit_app(self):
         self.quit()
-
-    def show_project_homepage(self):
-        webbrowser.open_new_tab(static.OSC_URL)
 
     def show_about_info(self):
         widgets.view_file(self, '关于', static.static_file('project.txt'))
@@ -99,11 +94,11 @@ class GameFrame(tk.Frame):
         self.map_frame.pack(side=tk.TOP, expand=tk.YES, padx=10, pady=10)
         self.game = Game(mine_map)
         height, width = mine_map.height, mine_map.width
-        self.bt_map = [[None for i in range(0, width)] for i in range(0, height)]
+        self.bt_map = [[None for _ in range(0, width)] for _ in range(0, height)]
         for x in range(0, height):
             for y in range(0, width):
                 self.bt_map[x][y] = tk.Button(self.map_frame, text='', width=3, height=1,
-                                              command=lambda x=x, y=y: self.sweep_mine(x, y))
+                                              command=lambda px=x, py=y: self.sweep_mine(px, py))
                 self.bt_map[x][y].config(static.style('grid.unknown'))
 
                 def _mark_mine(event, self=self, x=x, y=y):
@@ -114,7 +109,7 @@ class GameFrame(tk.Frame):
         self._create_info_frame()
 
     def _create_controller_frame(self):
-        self.controller_bar = tk.LabelFrame(self, text='控制', padx=5,pady=5)
+        self.controller_bar = tk.LabelFrame(self, text='控制', padx=5, pady=5)
         self.controller_bar.pack(side=tk.TOP, fill=tk.X, expand=tk.YES, padx=10, pady=2)
         self.start_bt = tk.Button(self.controller_bar, text='开始', relief=tk.GROOVE, command=self.start)
         self.start_bt.pack(side=tk.LEFT, expand=tk.NO, padx=4)
