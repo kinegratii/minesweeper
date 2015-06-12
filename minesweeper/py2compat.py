@@ -25,4 +25,7 @@ if PY2:
 else:
     range = range
     from functools import reduce
+    import queue
     from io import open
+    import tkinter
+    from tkinter import messagebox

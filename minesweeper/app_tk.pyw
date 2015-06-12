@@ -23,7 +23,7 @@ class App(tk.Frame):
         self.master.iconbitmap(static.images('mine.ico'))
         self.pack(expand=tk.NO, fill=tk.BOTH)
         self.map_frame = None
-        mine_map = level_config.map('simple')
+        mine_map = level_config.map('primary')
         self._create_map_frame(mine_map)
         self.create_top_menu()
 
