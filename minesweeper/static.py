@@ -5,7 +5,7 @@ import os
 from py2compat import reduce
 
 
-APP_NAME = 'Minesweeper v1.3.0'
+APP_NAME = 'Minesweeper v1.3.1'
 
 OSC_URL = 'http://git.oschina.net/kinegratii/minesweeper'
 
