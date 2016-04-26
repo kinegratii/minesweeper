@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 import random
 from collections import OrderedDict
 
-from py2compat import range
 from core import Map
 
 

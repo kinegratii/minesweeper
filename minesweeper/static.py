@@ -1,15 +1,17 @@
 # coding=utf8
 from __future__ import unicode_literals
-import os
 
-from py2compat import reduce
+import os
+import sys
+
+from functools import reduce
 
 
 APP_NAME = 'Minesweeper v1.3.1'
 
 OSC_URL = 'http://git.oschina.net/kinegratii/minesweeper'
 
-BASE_PATH = os.path.abspath(os.path.dirname(__file__))
+BASE_PATH = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 STATIC_DIR = os.path.join(BASE_PATH, 'resource')
 

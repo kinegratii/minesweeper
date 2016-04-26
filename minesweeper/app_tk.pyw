@@ -5,9 +5,15 @@
 from __future__ import unicode_literals
 import webbrowser
 
-from py2compat import tkinter as tk
-from py2compat import messagebox
-from py2compat import range
+try:
+    import tkinter as tk
+except ImportError:
+    import Tkinter as tk
+try:
+    from tkinter import messagebox
+except ImportError:
+    import tkMessageBox as messagebox
+
 from core import Game
 from helpers import GameHelpers
 from helpers import level_config
@@ -184,7 +190,6 @@ class GameFrame(tk.Frame):
                 cur_text = '?'
                 self.flag_count_label.increase()
             self.bt_map[x][y]['text'] = cur_text
-
 
     def _draw_map(self):
         # 重画地图

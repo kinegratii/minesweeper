@@ -2,9 +2,15 @@
 
 from __future__ import unicode_literals
 
-from py2compat import tkinter as tk
-from py2compat import messagebox
-from py2compat import open
+try:
+    import tkinter as tk
+except ImportError:
+    import Tkinter as tk
+try:
+    from tkinter import messagebox
+except ImportError:
+    import tkMessageBox as messagebox
+from io import open
 
 
 class CounterLabel(tk.Label):

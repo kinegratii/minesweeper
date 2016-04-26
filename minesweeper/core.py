@@ -5,8 +5,11 @@
 Update on 2014.05.04
 """
 from __future__ import unicode_literals
-from py2compat import queue
-from py2compat import range
+
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 
 
 class Map(object):
@@ -194,4 +197,3 @@ class Game(object):
     def _sweep_all_map(self):
         self._swept_state_map = [[True for _ in range(0, self.width)] for _ in range(0, self.height)]
         self._not_swept_number = self.mine_map.map_size - self.mine_map.mine_number
-
