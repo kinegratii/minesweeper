@@ -7,9 +7,9 @@ import sys
 from functools import reduce
 
 
-APP_NAME = 'Minesweeper v1.3.1'
+APP_NAME = '简易扫雷 v1.4.0'
 
-OSC_URL = 'http://git.oschina.net/kinegratii/minesweeper'
+HOME_URL = 'http://github.com/kinegratii/minesweeper'
 
 BASE_PATH = os.path.abspath(os.path.dirname(sys.argv[0]))
 

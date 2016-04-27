@@ -58,7 +58,7 @@ class App(tk.Frame):
         menu_bar.add_cascade(label='地图', menu=map_menu)
 
         about_menu = tk.Menu(menu_bar)
-        about_menu.add_command(label='主页', command=lambda: webbrowser.open_new_tab(static.OSC_URL))
+        about_menu.add_command(label='主页', command=lambda: webbrowser.open_new_tab(static.HOME_URL))
         about_menu.add_command(label='关于...', command=self.show_about_info)
         menu_bar.add_cascade(label='关于', menu=about_menu)
 
