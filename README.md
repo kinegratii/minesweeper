@@ -126,9 +126,19 @@ python app_tk.pyw
 ## 打包
 
 使用[PyInstaller](https://pythonhosted.org/PyInstaller/)打包。
+安装PyInstaller
 
+```
+pip install PyInstaller
+```
+ windows下，在path\Scripts\目录下生成pyinstaller.exe文件，将此目录添加到环境变量
+  执行以下命令即可。生成的文件在当前目录\dist\下。
 ```
 pyinstaller app_tk.pyw -F -w
 ```
+其中
+
+- -F 单文件
+- -w 窗口程序
 
 
